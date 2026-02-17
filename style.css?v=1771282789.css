@@ -20,6 +20,8 @@
   --liguidShine:  rgba(255, 255, 255, 0.5);
   --liguid-hover-half-tint:  rgba(255, 255, 255, 0.50);
   --liguid-hover-tint:  rgba(255, 255, 255, 0.50);
+
+  --drawer-background:  linear-gradient(180deg, rgba(255, 255, 255,0.6) 0%, rgba(255, 255, 255,0.35) 40%, rgba(255, 255, 255,0) 100%);
 }
 
 @media(min-width:600px){
@@ -57,6 +59,7 @@
     --liguidShine:  rgba(20, 18, 18, 0.2);
     --liguid-hover-half-tint:  rgba(16, 15, 15, 0.8);
     --liguid-hover-tint:  rgba(16, 15, 15, 0.);
+    --drawer-background:  linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0) 100%);
     
   }
 
@@ -69,7 +72,7 @@
   .btn{border-color:var(--border);}
   .seg .btn{background:var(--surface);}
   .m-drawer::after{
-    background:linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0) 100%);
+    background:var(--drawer-background);
   }
 }
 *{box-sizing:border-box}
@@ -884,7 +887,7 @@ position: absolute;
     right:0;
     top:0;
     height:calc(var(--drawer-handle-height, 80px) + 40px);
-    background:linear-gradient(180deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.25) 40%, rgba(255,255,255,0) 100%);
+    background:var(--drawer-background);
     pointer-events:none;
     z-index:0;
   }
