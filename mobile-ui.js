@@ -81,6 +81,11 @@
       const toggles = drawer.querySelectorAll('[data-drawer-toggle]');
       if (toggles.length) {
         const canUseDrawer = () => !document.body.classList.contains('reader-mode');
+        const resetDrawerTransform = () => {
+          drawer.style.removeProperty('transform');
+          drawer.style.removeProperty('transition');
+          drawer.removeAttribute('data-dragging');
+        };
         const setExpandedState = (isOpen) => {
           drawer.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
           toggles.forEach((btn) => {
@@ -91,11 +96,13 @@
           });
         };
         const closeDrawer = () => {
+          resetDrawerTransform();
           drawer.classList.remove('is-open');
           setExpandedState(false);
         };
         const openDrawer = () => {
           if (!canUseDrawer()) return;
+          resetDrawerTransform();
           drawer.classList.add('is-open');
           setExpandedState(true);
         };
@@ -120,6 +127,156 @@
             closeDrawer();
           }
         });
+
+        const setupDrawerDrag = () => {
+          const handle = drawer.querySelector('.m-drawer-handle');
+          const content = drawer.querySelector('.m-drawer-content');
+          if (!handle && !content) {
+            return;
+          }
+          const state = {
+            pointerId: null,
+            startY: 0,
+            baseTranslate: 0,
+            currentTranslate: 0,
+            maxTranslate: 0,
+            isDragging: false,
+            waitForDirection: false,
+            source: null
+          };
+
+          const removePointerListeners = () => {
+            window.removeEventListener('pointermove', onPointerMove);
+            window.removeEventListener('pointerup', onPointerUp);
+            window.removeEventListener('pointercancel', onPointerCancel);
+          };
+
+          const resetState = () => {
+            state.pointerId = null;
+            state.startY = 0;
+            state.baseTranslate = 0;
+            state.currentTranslate = 0;
+            state.maxTranslate = 0;
+            state.isDragging = false;
+            state.waitForDirection = false;
+            state.source = null;
+          };
+
+          const cleanupDrag = () => {
+            resetDrawerTransform();
+            removePointerListeners();
+            resetState();
+          };
+
+          const startDrag = () => {
+            if (state.isDragging) {
+              return;
+            }
+            state.isDragging = true;
+            drawer.style.transition = 'none';
+            drawer.dataset.dragging = '1';
+          };
+
+          const getMaxTranslate = () => {
+            const drawerHeight = drawer.offsetHeight;
+            const handleHeight = handle ? handle.offsetHeight : 0;
+            return Math.max(0, drawerHeight - handleHeight);
+          };
+
+          const onPointerMove = (event) => {
+            if (state.pointerId === null || event.pointerId !== state.pointerId) {
+              return;
+            }
+            const delta = event.clientY - state.startY;
+            if (state.waitForDirection) {
+              if (Math.abs(delta) < 6) {
+                return;
+              }
+              if (delta <= 0 || (content && content.scrollTop > 0)) {
+                cleanupDrag();
+                return;
+              }
+              state.waitForDirection = false;
+              startDrag();
+            } else if (!state.isDragging && Math.abs(delta) > 2) {
+              startDrag();
+            }
+            if (!state.isDragging) {
+              return;
+            }
+            const translate = Math.min(state.maxTranslate, Math.max(0, state.baseTranslate + delta));
+            state.currentTranslate = translate;
+            drawer.style.transform = `translateY(${translate}px)`;
+            event.preventDefault();
+          };
+
+          const onPointerUp = (event) => {
+            if (state.pointerId === null || event.pointerId !== state.pointerId) {
+              return;
+            }
+            const dragged = state.isDragging;
+            const endOffset = dragged ? state.currentTranslate : state.baseTranslate;
+            const max = state.maxTranslate;
+            cleanupDrag();
+            if (!dragged) {
+              return;
+            }
+            const shouldOpen = endOffset < max * 0.5;
+            if (shouldOpen) {
+              openDrawer();
+            } else {
+              closeDrawer();
+            }
+          };
+
+          const onPointerCancel = () => {
+            cleanupDrag();
+          };
+
+          const startPointerTracking = (event, source) => {
+            if (!canUseDrawer()) {
+              return;
+            }
+            if (state.pointerId !== null) {
+              return;
+            }
+            if (source === 'content') {
+              if (!drawer.classList.contains('is-open')) {
+                return;
+              }
+            }
+            state.pointerId = event.pointerId || -1;
+            state.source = source;
+            state.startY = event.clientY;
+            state.maxTranslate = getMaxTranslate();
+            state.baseTranslate = drawer.classList.contains('is-open') ? 0 : state.maxTranslate;
+            state.currentTranslate = state.baseTranslate;
+            state.waitForDirection = source === 'content';
+            window.addEventListener('pointermove', onPointerMove, { passive: false });
+            window.addEventListener('pointerup', onPointerUp);
+            window.addEventListener('pointercancel', onPointerCancel);
+            if (source === 'handle') {
+              state.waitForDirection = false;
+              startDrag();
+              event.preventDefault();
+            } else if (content && content.scrollTop > 0) {
+              cleanupDrag();
+            }
+          };
+
+          if (handle) {
+            handle.addEventListener('pointerdown', (evt) => {
+              startPointerTracking(evt, 'handle');
+            });
+          }
+          if (content) {
+            content.addEventListener('pointerdown', (evt) => {
+              startPointerTracking(evt, 'content');
+            });
+          }
+        };
+
+        setupDrawerDrag();
       }
     }
   };
