@@ -287,6 +287,12 @@
   } else {
     handleReady();
   }
+  document.addEventListener('content:ready', () => {
+    initMobileUi();
+  });
+  if (window.__contentReady) {
+    initMobileUi();
+  }
 
   const mediaChangeHandler = (event) => {
     if (event.matches && !initialized) {
