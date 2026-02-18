@@ -23,6 +23,8 @@ sections:
   - id: "one"
     type: "image"
     figure:
+      small-light: "./1920/new-hero-white-loose.webp"
+      small-dark: "./1920/new-hero-black-loose.webp"
       light: "./1920/new-hero-white.png"
       dark: "./1920/new-hero-black.png"
       alt: ""
