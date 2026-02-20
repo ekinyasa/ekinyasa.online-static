@@ -1,0 +1,1 @@
+Prevent GitHub Pages from processing files with Jekyll so landing.md is served verbatim.
