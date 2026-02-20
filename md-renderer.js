@@ -4,7 +4,7 @@
   if (!Object.prototype.hasOwnProperty.call(window, '__contentReady')) {
     window.__contentReady = false;
   }
-  const MARKDOWN_URL = 'landing.txt';
+  const MARKDOWN_URL = 'landing.md';
   const EVENT_NAME = 'content:ready';
   let historySynced = false;
 
