@@ -1,4 +1,3 @@
----
 contact:
   phone: "+905325790673"
   phone_display: "+90  532  579  06  73"
@@ -112,4 +111,3 @@ sections:
       bu yöntemle yoluna başlayabilirsin.<br>
       <br><br>
       <a class="ac-button" target="_blank" href="{{whatsapp_link}}" data-analytics-title="book a session">randevu al</a>
----

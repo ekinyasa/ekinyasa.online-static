@@ -4,7 +4,7 @@
   if (!Object.prototype.hasOwnProperty.call(window, '__contentReady')) {
     window.__contentReady = false;
   }
-  const MARKDOWN_URL = 'landing.md';
+  const MARKDOWN_URL = 'landing.yml';
   const EVENT_NAME = 'content:ready';
   let historySynced = false;
 
@@ -229,6 +229,38 @@
     return { meta, body };
   };
 
+  const parseLandingPayload = (raw) => {
+    const trimmed = (raw || '').trim();
+    if (!trimmed) {
+      return {};
+    }
+    if (trimmed.startsWith('{')) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (parsed && typeof parsed === 'object') {
+          return parsed.meta || parsed;
+        }
+      } catch (error) {
+        console.error('JSON parse error', error);
+      }
+    }
+    if (trimmed.startsWith('---')) {
+      const { meta } = parseFrontmatter(raw);
+      return meta;
+    }
+    if (window.jsyaml && typeof window.jsyaml.load === 'function') {
+      try {
+        const parsed = window.jsyaml.load(trimmed);
+        if (parsed && typeof parsed === 'object') {
+          return parsed.meta || parsed;
+        }
+      } catch (error) {
+        console.error('YAML parse error', error);
+      }
+    }
+    return {};
+  };
+
   const cleanPhoneDigits = (phone) => (phone || '').replace(/[^\d]/g, '');
 
   const buildWhatsAppLink = (contact) => {
@@ -448,7 +480,7 @@
         return response.text();
       })
       .then((raw) => {
-        const { meta } = parseFrontmatter(raw);
+        const meta = parseLandingPayload(raw);
         renderLanding(meta);
       })
       .catch((error) => {
