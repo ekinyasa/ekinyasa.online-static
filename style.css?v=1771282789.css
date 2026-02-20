@@ -790,12 +790,20 @@ body.public-view main.container > section.view{
   scroll-snap-stop:always;
 }
 @media(min-width:769px){
+  html,
+  body{
+    height:100vh;
+    min-height:100vh;
+    overflow:hidden;
+  }
   .container section.view{
     height:100vh;
   }
   body.public-view main.container{
     height:100vh;
-    max-height:none;
+    max-height:100vh;
+    overflow-y:auto;
+    overscroll-behavior:contain;
   }
   body.public-view main.container > section.view{
     height:100vh;
