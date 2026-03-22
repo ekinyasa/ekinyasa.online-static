@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="tr">
+
+<head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5XSVVKVJLQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-5XSVVKVJLQ');
+</script>
+  <meta charset="utf-8">
+  <title>Disintegration Slides</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: #050505;
+      color: #f5f5f5;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .slides {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .scene {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.01s linear;
+    }
+
+    .scene.active {
+      opacity: 1;
+      z-index: 1;
+    }
+
+    .scene h1 {
+      font-size: clamp(32px, 4vw, 60px);
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    .scene p {
+      max-width: 640px;
+      line-height: 1.6;
+      font-size: 18px;
+      color: rgba(245, 245, 245, 0.85);
+    }
+
+    .scene:nth-child(1) {
+      background: linear-gradient(135deg, #111, #27243b);
+    }
+
+    .scene:nth-child(2) {
+      background: linear-gradient(135deg, #1b2331, #352431);
+    }
+
+    .scene:nth-child(3) {
+      background: linear-gradient(135deg, #081b22, #2a3d3a);
+    }
+
+    .scene:nth-child(4) {
+      background: linear-gradient(135deg, #21162b, #3d2438);
+    }
+
+    .scene:nth-child(5) {
+      background: linear-gradient(135deg, #10252a, #1a563e);
+    }
+
+    .controls {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      color: rgba(255, 255, 255, 0.7);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-size: 12px;
+      z-index: 120;
+      mix-blend-mode: normal;
+    }
+
+    .controls button {
+      padding: 12px 36px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+      letter-spacing: 0.1em;
+      border-radius: 999px;
+      text-transform: uppercase;
+      transition: opacity 0.25s ease, border-color 0.25s ease;
+    }
+
+    .controls button:disabled {
+      opacity: 0.4;
+      border-color: rgba(255, 255, 255, 0.2);
+      cursor: not-allowed;
+    }
+
+    .disintegration-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      z-index: 90;
+      pointer-events: none;
+    }
+
+    .disintegration-overlay.active {
+      display: block;
+    }
+
+    .disintegration-overlay canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      will-change: transform, opacity, filter;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="slides">
+    <section class="scene active">
+      <h1>Scene One</h1>
+      <p>Scroll'u değil, bu düğmeyi veya boşluk tuşunu kullanarak sıradaki sahneye geç. Her sahne Thanos vari dağılıp yok olacak.</p>
+    </section>
+    <section class="scene">
+      <h1>Scene Two</h1>
+      <p>Disintegration efekti HTML2Canvas ile görüntünün gerçek piksel verisinden oluşturulan parçacıklar sayesinde çalışıyor.</p>
+    </section>
+    <section class="scene">
+      <h1>Scene Three</h1>
+      <p>Bu demoda her sahne full-screen ve tek tek overlay kaydırmasıyla yok oluyor. Süreyi, parçacık sayısını ve yönünü JS üzerinden değiştirebilirsin.</p>
+    </section>
+    <section class="scene">
+      <h1>Scene Four</h1>
+      <p>Orijinal efektteki gibi, sahne yok olduktan sonra sıradaki sahne görünür hale geliyor; scroll ile DOM akışı hareket etmiyor.</p>
+    </section>
+    <section class="scene">
+      <h1>Scene Five</h1>
+      <p>Yeterince sahne eklemek istiyorsan, sadece `IMAGE_SOURCES` listesini ve HTML'deki section'ları genişletmen yeterli.</p>
+    </section>
+  </main>
+  <div class="controls">
+    <button type="button" data-trigger disabled>Loading…</button>
+    <span class="hint">or press space</span>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+    window.addEventListener('load', () => {
+      const scenes = Array.from(document.querySelectorAll('.scene'));
+      const triggerBtn = document.querySelector('[data-trigger]');
+      const FRAGMENT_COUNT = 70;
+      const FRAGMENT_REPEAT = 3;
+      const DISINTEGRATION_DURATION = 1200;
+      let currentIndex = 0;
+      let fragmentsCache = [];
+      let animating = false;
+      let ready = false;
+
+      const loadSceneCanvas = (scene) => window.html2canvas(scene, {
+        backgroundColor: null,
+        useCORS: true,
+        scale: window.devicePixelRatio || 1
+      });
+
+      const buildFragmentsFromCanvas = (canvas) => {
+        const width = canvas.width;
+        const height = canvas.height;
+        const ctx = canvas.getContext('2d');
+        const source = ctx.getImageData(0, 0, width, height);
+        const fragments = Array.from({ length: FRAGMENT_COUNT }, () => {
+          const fragmentCanvas = document.createElement('canvas');
+          fragmentCanvas.width = width;
+          fragmentCanvas.height = height;
+          const fragmentCtx = fragmentCanvas.getContext('2d');
+          const fragmentData = fragmentCtx.createImageData(width, height);
+          return { canvas: fragmentCanvas, ctx: fragmentCtx, data: fragmentData };
+        });
+        for (let x = 0; x < width; x += 1) {
+          for (let y = 0; y < height; y += 1) {
+            for (let repeat = 0; repeat < FRAGMENT_REPEAT; repeat += 1) {
+              const idx = (x + (y * width)) * 4;
+              const fragmentIndex = Math.min(
+                fragments.length - 1,
+                Math.max(0, Math.floor((fragments.length * (Math.random() + (2 * x) / width)) / 3))
+              );
+              const fragment = fragments[fragmentIndex];
+              fragment.data.data[idx] = source.data[idx];
+              fragment.data.data[idx + 1] = source.data[idx + 1];
+              fragment.data.data[idx + 2] = source.data[idx + 2];
+              fragment.data.data[idx + 3] = source.data[idx + 3];
+            }
+          }
+        }
+        fragments.forEach((fragment) => {
+          fragment.ctx.putImageData(fragment.data, 0, 0);
+        });
+        return fragments.map((fragment) => fragment.canvas);
+      };
+
+      const buildFragmentCanvases = (canvas) => buildFragmentsFromCanvas(canvas);
+
+      const createDisintegrationLayer = (fragments) => {
+        const overlay = document.createElement('div');
+        overlay.className = 'disintegration-overlay';
+        const fragmentsData = fragments.map((fragmentCanvas) => {
+          const canvas = fragmentCanvas.cloneNode(true);
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(fragmentCanvas, 0, 0);
+          const bounds = {
+            x: (Math.random() - 0.5) * 300,
+            y: -50 - (Math.random() * 260),
+            rotate: (Math.random() - 0.5) * 55,
+            delay: Math.random() * 0.35,
+            blur: 6 + (Math.random() * 12)
+          };
+          canvas.style.opacity = '1';
+          canvas.style.filter = 'blur(0)';
+          overlay.appendChild(canvas);
+          return { canvas, bounds };
+        });
+        overlay.__fragments = fragmentsData;
+        overlay.style.display = 'block';
+        return overlay;
+      };
+
+      const animateLayer = (overlay) => new Promise((resolve) => {
+        const fragments = overlay.__fragments || [];
+        const duration = DISINTEGRATION_DURATION;
+        const ease = (t) => 1 - Math.pow(1 - t, 3);
+        const start = performance.now();
+        const tick = (now) => {
+          const progress = Math.min(1, (now - start) / duration);
+          fragments.forEach(({ canvas, bounds }) => {
+            const localProgress = Math.min(1, Math.max(0, (progress - bounds.delay) / (1 - bounds.delay)));
+            const eased = ease(localProgress);
+            canvas.style.transform = `translate(${bounds.x * eased}px, ${bounds.y * eased}px) rotate(${bounds.rotate * eased}deg)`;
+            canvas.style.opacity = String(Math.max(0, 1 - eased));
+            canvas.style.filter = `blur(${bounds.blur * eased}px)`;
+          });
+          if (progress < 1) {
+            requestAnimationFrame(tick);
+          } else {
+            resolve();
+          }
+        };
+        requestAnimationFrame(tick);
+      });
+
+      const preloadFragments = () => Promise.all(
+        scenes.map((scene) => loadSceneCanvas(scene).then(buildFragmentsFromCanvas))
+      );
+
+    const goToNextScene = () => {
+      if (!ready || animating || currentIndex >= scenes.length - 1) return;
+      animating = true;
+      const currentScene = scenes[currentIndex];
+      const nextScene = scenes[currentIndex + 1];
+      const fragments = fragmentsCache[currentIndex];
+      if (!fragments || !fragments.length) {
+        animating = false;
+        return;
+      }
+      const rect = currentScene.getBoundingClientRect();
+      const overlay = createDisintegrationLayer(fragments);
+      overlay.style.left = `${rect.left}px`;
+      overlay.style.top = `${rect.top}px`;
+      overlay.style.width = `${rect.width}px`;
+      overlay.style.height = `${rect.height}px`;
+      document.body.appendChild(overlay);
+      animateLayer(overlay).then(() => {
+        overlay.remove();
+        currentScene.classList.remove('active');
+        nextScene.classList.add('active');
+        currentIndex += 1;
+        animating = false;
+      });
+    };
+
+      const handleTrigger = (event) => {
+        if (!ready || animating) return;
+        if (event.type === 'keydown') {
+          if (event.code === 'Space' || event.key === ' ') {
+            event.preventDefault();
+            goToNextScene();
+          }
+          return;
+        }
+        goToNextScene();
+      };
+
+      document.addEventListener('keydown', handleTrigger, { passive: false });
+      triggerBtn.addEventListener('click', handleTrigger);
+
+      preloadFragments()
+        .then((prepared) => {
+          fragmentsCache = prepared;
+          ready = true;
+          triggerBtn.disabled = false;
+          triggerBtn.textContent = 'Next Scene';
+        })
+        .catch((error) => {
+          console.error('Disintegration preload error', error);
+          triggerBtn.disabled = false;
+          triggerBtn.textContent = 'Retry';
+        });
+    });
+  </script>
+</body>
+
+</html>
+      const handleTrigger = (event) => {
+        if (!ready || animating) return;
+        if (event.type === 'keydown') {
+          if (event.code === 'Space' || event.key === ' ') {
+            event.preventDefault();
+            goToNextScene();

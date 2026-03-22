@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="tr">
+<head>
+	<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5XSVVKVJLQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-5XSVVKVJLQ');
+</script>
+  <meta charset="UTF-8">
+  
+
+
+  
+<head>
+    <meta charset="utf-8">
+    <title>Effect</title>
+   <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/gsap-latest-beta.min.js"></script>
+    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/html2canvas@1.0.0-rc.5/dist/html2canvas.js"></script>
+</head>
+<body>
+
+<style>
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+  width: 100%;
+  height: 300vh;
+    background-color: black;
+    position:relative;
+}
+
+.capture-canvas {
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+    
+}
+
+#capture {
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: 600px;
+	height: 400px; background-color: black;
+}
+
+    #capture img {
+            width: 100%;
+            height: auto;
+           
+            display: inline-block;
+        }
+
+.stage-two{
+  position:fixed;
+  left:50%;
+  top:50%;
+  transform:translate(-50%, -50%);
+  width:600px;
+  max-width:90vw;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.6s ease;
+}
+.stage-two img{
+  width:100%;
+  height:auto;
+  box-shadow:0 30px 60px rgba(0,0,0,0.4);
+}
+body.show-second .stage-two{
+  opacity:1;
+}
+
+
+
+</style>
+
+
+<div id="capture">
+	<img src="./disintegration/1.png" aria-label="Disintegration stage">
+</div>
+
+<div class="stage-two">
+  <img src="./disintegration/2.png" alt="Second stage">
+</div>
+
+
+
+<script>
+    console.clear();
+
+// the disintegration effect is taken from --> https://www.youtube.com/watch?v=5DGZhWDl6XM 
+
+
+gsap.registerPlugin(ScrollTrigger);
+
+const COUNT = 75;
+const REPEAT_COUNT = 3;
+
+const capture = document.querySelector("#capture");
+const stageTwo = document.querySelector("#stage-two");
+
+
+function createCanvases(captureEl) {
+	html2canvas(captureEl).then((canvas) => {
+		const width = canvas.width;
+		const height = canvas.height;
+		const ctx = canvas.getContext("2d");
+		const imageData = ctx.getImageData(0, 0, width, height);
+		let dataList = [];
+		captureEl.style.visibility = "hidden";
+
+		for (let i = 0; i < COUNT; i++) {
+			dataList.push(ctx.createImageData(width, height));
+		}
+
+		for (let x = 0; x < width; x++) {
+			for (let y = 0; y < height; y++) {
+				for (let l = 0; l < REPEAT_COUNT; l++) {
+					const index = (x + y * width) * 4;
+					const dataIndex = Math.floor(
+						(COUNT * (Math.random() + (2 * x) / width)) / 3
+					);
+					for (let p = 0; p < 4; p++) {
+						dataList[dataIndex].data[index + p] = imageData.data[index + p];
+					}
+				}
+			}
+		}
+
+		dataList.forEach((data, i) => {
+			let clonedCanvas = canvas.cloneNode();
+			clonedCanvas.getContext("2d").putImageData(data, 0, 0);
+			clonedCanvas.className = "capture-canvas";
+			document.body.appendChild(clonedCanvas);
+
+			const randomAngle = (Math.random() - 0.5) * 2 * Math.PI;
+			const randomRotationAngle = 30 * (Math.random() - 0.5);
+
+			let tl = gsap.timeline({
+				scrollTrigger: {
+					scrub: 1,
+					start: () => 0,
+					end: () => window.innerHeight * 2
+				}
+			});
+
+			tl.to(clonedCanvas, {
+				duration: 1,
+				rotate: randomRotationAngle,
+				translateX: 40 * Math.sin(randomAngle),
+				translateY: 40 * Math.cos(randomAngle),
+				opacity: 0,
+				delay: (i / dataList.length) * 2
+			});
+		});
+	});
+}
+function createCanvases(stageTwoEl) {
+	html2canvas(stageTwoEl).then((canvas) => {
+		const width = canvas.width;
+		const height = canvas.height;
+		const ctx = canvas.getContext("2d");
+		const imageData = ctx.getImageData(0, 0, width, height);
+		let dataList = [];
+		stageTwoEl.style.visibility = "hidden";
+
+		for (let i = 0; i < COUNT; i++) {
+			dataList.push(ctx.createImageData(width, height));
+		}
+
+		for (let x = 0; x < width; x++) {
+			for (let y = 0; y < height; y++) {
+				for (let l = 0; l < REPEAT_COUNT; l++) {
+					const index = (x + y * width) * 4;
+					const dataIndex = Math.floor(
+						(COUNT * (Math.random() + (2 * x) / width)) / 3
+					);
+					for (let p = 0; p < 4; p++) {
+						dataList[dataIndex].data[index + p] = imageData.data[index + p];
+					}
+				}
+			}
+		}
+
+		dataList.forEach((data, i) => {
+			let clonedCanvas = canvas.cloneNode();
+			clonedCanvas.getContext("2d").putImageData(data, 0, 0);
+			clonedCanvas.className = "stageTwo-canvas";
+			document.body.appendChild(clonedCanvas);
+
+			const randomAngle = (Math.random() - 0.5) * 2 * Math.PI;
+			const randomRotationAngle = 30 * (Math.random() - 0.5);
+
+			let tl = gsap.timeline({
+				scrollTrigger: {
+					scrub: 1,
+					start: () => 0,
+					end: () => window.innerHeight * 2
+				}
+			});
+
+			tl.to(clonedCanvas, {
+				duration: 1,
+				rotate: randomRotationAngle,
+				translateX: 40 * Math.sin(randomAngle),
+				translateY: 40 * Math.cos(randomAngle),
+				opacity: 0,
+				delay: (i / dataList.length) * 2
+			});
+		});
+	});
+}
+
+const images = gsap.utils.toArray("img");
+
+imagesLoaded(images).on("always", () => {
+	createCanvases(capture);
+});
+
+const SCROLL_MULTIPLIER = 3;
+const AUTO_SCROLL_DISTANCE = () => (window.innerHeight * SCROLL_MULTIPLIER);
+let autoScrollActive = false;
+
+const smoothScrollTo = (targetY, duration = 900) => {
+  const startY = window.scrollY || window.pageYOffset;
+  const distance = targetY - startY;
+  const startTime = performance.now();
+  autoScrollActive = true;
+  const step = (now) => {
+    const progress = Math.min(1, (now - startTime) / duration);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    window.scrollTo(0, startY + (distance * eased));
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    } else {
+      autoScrollActive = false;
+      updateSecondImageVisibility(targetY);
+    }
+  };
+  requestAnimationFrame(step);
+};
+
+window.addEventListener('wheel', (event) => {
+  if (autoScrollActive) {
+    event.preventDefault();
+    return;
+  }
+  const delta = event.deltaY || 0;
+  if (Math.abs(delta) < 5) return;
+  event.preventDefault();
+  const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+  const currentY = window.scrollY || window.pageYOffset;
+  const step = AUTO_SCROLL_DISTANCE();
+  const direction = delta > 0 ? 1 : -1;
+  let target = currentY + (direction * step);
+  if (target < 0) target = 0;
+  if (target > maxScroll) target = maxScroll;
+  smoothScrollTo(target);
+}, { passive: false });
+
+const getMaxScroll = () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+const updateSecondImageVisibility = (scrollPosition) => {
+  const maxScroll = getMaxScroll();
+  const threshold = maxScroll * 0.85;
+  if (scrollPosition >= threshold) {
+    document.body.classList.add('show-second');
+  } else {
+    document.body.classList.remove('show-second');
+  }
+};
+
+window.addEventListener('scroll', () => {
+  updateSecondImageVisibility(window.scrollY || window.pageYOffset);
+}, { passive: true });
+
+window.addEventListener('resize', () => {
+  const maxScroll = getMaxScroll();
+  if ((window.scrollY || window.pageYOffset) > maxScroll) {
+    window.scrollTo(0, maxScroll);
+  }
+  updateSecondImageVisibility(window.scrollY || window.pageYOffset);
+});
+
+</script>
+
+</body>
+</html>

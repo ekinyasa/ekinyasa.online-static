@@ -82,12 +82,6 @@
     overlay.style.objectFit = computedImgStyle.objectFit;
     overlay.style.objectPosition = computedImgStyle.objectPosition;
     overlay.style.position = 'absolute';
-    overlay.style.left = '0';
-    overlay.style.top = '0';
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.maxWidth = '100%';
-    overlay.style.maxHeight = '100%';
     overlay.style.margin = '0';
     overlay.style.transition = PROGRESSIVE_TRANSITION;
     overlay.style.opacity = '0';
@@ -96,6 +90,30 @@
     overlay.style.willChange = 'opacity';
 
     const overlayContainer = picture.parentElement || picture;
+    const isImageOnlySection = Boolean(
+      (typeof overlayContainer.closest === 'function')
+        ? overlayContainer.closest('section.view.image-only')
+        : null
+    );
+
+    if (isImageOnlySection) {
+      overlay.style.left = '50%';
+      overlay.style.top = 'auto';
+      overlay.style.bottom = '0';
+      overlay.style.transform = 'translateX(-50%)';
+      overlay.style.width = 'auto';
+      overlay.style.height = '100%';
+      overlay.style.maxWidth = '100%';
+      overlay.style.maxHeight = '100%';
+    } else {
+      overlay.style.left = '0';
+      overlay.style.top = '0';
+      overlay.style.transform = 'none';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.maxWidth = '100%';
+      overlay.style.maxHeight = '100%';
+    }
     ensureOverlayContainerStyles(overlayContainer);
     overlayContainer.appendChild(overlay);
 
@@ -292,48 +310,36 @@
   };
 
   const buildSectionElement = (section, index, context) => {
+    const hasBody = typeof section.body === 'string' && section.body.trim().length > 0;
+    const hasFigure = Boolean(section.figure);
     const el = document.createElement('section');
     el.className = 'view';
     el.id = section.id || `section_${index + 1}`;
+    if (hasFigure && !hasBody) {
+      el.classList.add('image-only');
+    }
     if (section.figure) {
       const figureData = section.figure;
       const figure = document.createElement('figure');
       const picture = document.createElement('picture');
-      const hasSmallLight = Boolean(figureData['small-light']);
-      const hasSmallDark = Boolean(figureData['small-dark']);
-      const enableProgressive = hasSmallLight || hasSmallDark;
-
-      if (enableProgressive) {
-        picture.dataset.progressiveImage = 'true';
-      }
-
-      const darkSourceValue = enableProgressive
-        ? (figureData['small-dark'] || figureData.dark || '')
-        : (figureData.dark || '');
+      const largeLight = figureData.light || figureData.src || '';
+      const darkSourceValue = figureData.dark || '';
 
       if (darkSourceValue) {
         const source = document.createElement('source');
         source.media = '(prefers-color-scheme: dark)';
         source.srcset = darkSourceValue;
-        if (enableProgressive && figureData.dark) {
-          source.setAttribute('data-large-dark', figureData.dark);
-        }
         picture.appendChild(source);
       }
 
       const img = document.createElement('img');
-      const largeLight = figureData.light || figureData.src || '';
-      const smallLight = enableProgressive ? (figureData['small-light'] || largeLight) : largeLight;
-      img.src = smallLight;
+      img.src = largeLight;
       img.alt = figureData.alt || '';
-      if (enableProgressive && largeLight) {
-        img.setAttribute('data-large-light', largeLight);
-      }
       picture.appendChild(img);
       figure.appendChild(picture);
       el.appendChild(figure);
     }
-    if (section.body) {
+    if (hasBody) {
       const body = document.createElement('div');
       body.className = 'section-body';
       body.innerHTML = renderMarkdown(section.body, context);

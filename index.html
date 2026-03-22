@@ -2,6 +2,15 @@
 <html lang="tr">
 
 <head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5XSVVKVJLQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-5XSVVKVJLQ');
+</script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Ekin Yaşa</title>
@@ -10,6 +19,7 @@
   <meta name="theme-color" content="#0f0f10" media="(prefers-color-scheme: dark)">
   <link rel="stylesheet" href="style.css%3Fv=1771282789.css">
   <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script defer src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
   <script defer src="md-renderer.js"></script>
 </head>
@@ -902,6 +912,105 @@
         const sections = Array.from(container.querySelectorAll('section.view'));
         if (!sections.length) return;
         initialized = true;
+        const FRAGMENT_COUNT = 60;
+        const FRAGMENT_REPEAT = 3;
+        const DISINTEGRATION_DURATION = 1100;
+        const buildFragmentsFromCanvas = (canvas) => {
+          const width = canvas.width;
+          const height = canvas.height;
+          const ctx = canvas.getContext('2d');
+          const source = ctx.getImageData(0, 0, width, height);
+          const fragments = Array.from({ length: FRAGMENT_COUNT }, () => {
+            const fragmentCanvas = document.createElement('canvas');
+            fragmentCanvas.width = width;
+            fragmentCanvas.height = height;
+            const fragmentCtx = fragmentCanvas.getContext('2d');
+            const fragmentData = fragmentCtx.createImageData(width, height);
+            return { canvas: fragmentCanvas, ctx: fragmentCtx, data: fragmentData };
+          });
+          for (let x = 0; x < width; x += 1) {
+            for (let y = 0; y < height; y += 1) {
+              for (let repeat = 0; repeat < FRAGMENT_REPEAT; repeat += 1) {
+                const idx = (x + (y * width)) * 4;
+                const fragmentIndex = Math.min(
+                  fragments.length - 1,
+                  Math.max(0, Math.floor((fragments.length * (Math.random() + (2 * x) / width)) / 3))
+                );
+                const fragment = fragments[fragmentIndex];
+                fragment.data.data[idx] = source.data[idx];
+                fragment.data.data[idx + 1] = source.data[idx + 1];
+                fragment.data.data[idx + 2] = source.data[idx + 2];
+                fragment.data.data[idx + 3] = source.data[idx + 3];
+              }
+            }
+          }
+          fragments.forEach((fragment) => {
+            fragment.ctx.putImageData(fragment.data, 0, 0);
+          });
+          return fragments.map((fragment) => fragment.canvas);
+        };
+        const createOverlayFromFragments = (fragments, rect) => {
+          const overlay = document.createElement('div');
+          overlay.className = 'disintegration-overlay';
+          overlay.style.width = `${rect.width}px`;
+          overlay.style.height = `${rect.height}px`;
+          overlay.style.left = `${rect.left}px`;
+          overlay.style.top = `${rect.top}px`;
+          overlay.style.setProperty('--disintegration-duration', `${DISINTEGRATION_DURATION}ms`);
+          fragments.forEach((fragmentCanvas, index) => {
+            const slice = document.createElement('div');
+            slice.className = 'disintegration-slice';
+            const percentStart = (index / fragments.length) * 100;
+            const percentEnd = percentStart + (100 / fragments.length) + 1;
+            slice.style.clipPath = `polygon(${percentStart}% 0, ${percentStart}% 100%, ${percentEnd}% 100%, ${percentEnd}% 0)`;
+            slice.style.setProperty('--slice-delay', `${(index / fragments.length) * 0.12}s`);
+            slice.style.setProperty('--slice-shift-x', `${((Math.random() - 0.5) * 80).toFixed(2)}px`);
+            slice.style.setProperty('--slice-shift-y', `${-35 - (Math.random() * 30)}%`);
+            slice.style.setProperty('--slice-rotate', `${((Math.random() - 0.5) * 20).toFixed(2)}deg`);
+            const clone = fragmentCanvas.cloneNode(true);
+            const ctx = clone.getContext('2d');
+            ctx.drawImage(fragmentCanvas, 0, 0);
+            slice.appendChild(clone);
+            overlay.appendChild(slice);
+          });
+          return overlay;
+        };
+        const runDisintegration = (section) => {
+          if (!window.html2canvas) return Promise.resolve();
+          const figure = section.querySelector('figure');
+          if (!figure) return Promise.resolve();
+          const target = figure.querySelector('img');
+          if (!target) return Promise.resolve();
+          const rect = figure.getBoundingClientRect();
+          const overlayRect = {
+            left: rect.left + (window.scrollX || window.pageXOffset || 0),
+            top: rect.top + (window.scrollY || window.pageYOffset || 0),
+            width: rect.width,
+            height: rect.height
+          };
+          return window.html2canvas(figure, {
+            backgroundColor: null,
+            useCORS: true,
+            scale: window.devicePixelRatio || 1
+          }).then((canvas) => {
+            figure.style.visibility = 'hidden';
+            const fragments = buildFragmentsFromCanvas(canvas);
+            const overlay = createOverlayFromFragments(fragments, overlayRect);
+            document.body.appendChild(overlay);
+            return new Promise((resolve) => {
+              requestAnimationFrame(() => {
+                overlay.classList.add('animate');
+              });
+              window.setTimeout(() => {
+                overlay.remove();
+                figure.style.visibility = '';
+                resolve();
+              }, DISINTEGRATION_DURATION);
+            });
+          }).catch(() => {
+            figure.style.visibility = '';
+          });
+        };
         const sectionObserver = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -934,17 +1043,56 @@
             lock = false;
           }, lockDelay);
         };
+        const scrollToSection = (targetSection) => new Promise((resolve) => {
+          if (!targetSection) {
+            resolve();
+            return;
+          }
+          const targetTop = targetSection.offsetTop - container.offsetTop;
+          const start = container.scrollTop;
+          const distance = targetTop - start;
+          const duration = 650;
+          const startTime = performance.now();
+          const step = (now) => {
+            const progress = Math.min(1, (now - startTime) / duration);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            container.scrollTop = start + (distance * eased);
+            if (progress < 1) {
+              requestAnimationFrame(step);
+            } else {
+              resolve();
+            }
+          };
+          requestAnimationFrame(step);
+        });
+        const handleSectionChange = (fromIdx, toIdx) => {
+          if (fromIdx === toIdx || fromIdx < 0 || toIdx < 0 || toIdx >= sections.length) {
+            snapTo(sections[toIdx]);
+            return;
+          }
+          lock = true;
+          runDisintegration(sections[fromIdx])
+            .then(() => scrollToSection(sections[toIdx]))
+            .finally(() => {
+              window.setTimeout(() => {
+                lock = false;
+              }, lockDelay);
+            });
+        };
         container.addEventListener('wheel', (evt) => {
           if (body.classList.contains('reader-mode')) return;
-          if (lock) return;
           const delta = evt.deltaY || 0;
           if (Math.abs(delta) < 40) return;
+          if (typeof evt.preventDefault === 'function') {
+            evt.preventDefault();
+          }
+          if (lock) return;
           const idx = getIndex();
           const dir = delta > 0 ? 1 : -1;
           const next = Math.min(sections.length - 1, Math.max(0, idx + dir));
           if (next === idx) return;
-          snapTo(sections[next]);
-        }, { passive: true });
+          handleSectionChange(idx, next);
+        }, { passive: false });
         const updateFooterState = () => {
           const nearBottom = (container.scrollTop + container.clientHeight) >= (container.scrollHeight - 4);
           document.body.classList.toggle('footer-expanded', nearBottom);
@@ -1165,7 +1313,6 @@ if (window.matchMedia("(max-width: 768px)").matches) {
   
 }
 </script>
-
 </body>
 
 </html>
