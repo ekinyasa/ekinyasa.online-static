@@ -30,20 +30,18 @@ sections:
   - id: "two"
     type: "text"
     body: |-
-      Bedeninde Kalmayı Öğren<br>
-      <br>
+      Bedeninde Kalmayı Öğren;<br>
       düzeltmeden, zorlamadan, kaçmadan..
   - id: "three"
     type: "text"
     body: |-
       Grinberg Metot Çalışması,<br>
-      <br>
       dikkatini en etkin şekilde kullanmayı öğrendiğin,<br>
       alışılmışın dışında bir yöntemdir.<br>
       <br>
-      bire bir ve temasla uygulanır.<br>
+      Bire-bir ve temasla uygulanır.<br>
       <br>
-      gerektiğinde grup çalışmaları ve<br>
+      Gerektiğinde grup çalışmaları ve<br>
       farklı pratik araçlar da sürece eşlik eder.
   - id: "four"
     type: "image"
@@ -54,11 +52,10 @@ sections:
   - id: "five"
     type: "text"
     body: |-
-      Kişisel Seanslar,<br>
+      Kişisel seanslar;<br>
+      bedeninde yerleşmiş alışkanlıkları fark etmeyi öğretir.<br>
       <br>
-      bedeninde yerleşmiş alışkanlıkları fark etmeyi<br>
-      ve onlarla kurduğun ilişkiyi nasıl değiştireceğini<br>
-      öğretecek şekilde hazırlanır.<br>
+      Ve bu yerleşik kalıplarla kurduğun ilişkiyi nasıl değiştireceğini.<br>
       <br>
       “iyi gelsin” diye uygulanan bir masaj değildir.
   - id: "section_jzaop5"
@@ -70,44 +67,43 @@ sections:
   - id: "six"
     type: "text"
     body: |-
-      Çalışma Sırarında<br>
+      Farkında olamadığın ve baskı altında tuttuğun<br>
+      bedensel tepkilerinle çalışırız.<br>
       <br>
-      bedensel tepkilerle çalışırız.<br>
-      ağrı, stres, korku gibi yoğun deneyimleri nasıl yaşadığınla ve alışkanlıklarınla<br>
+      Ağrı, stres, korku, yoğun duygu halleri..<br>
+      <br><br>
+      Kaçmadan,<br>
+      düzeltmeden.<br>
       <br>
-      kaçmadan,<br>
-      düzeltmeden,<br>
-      bedeninle aynı tarafta kalarak.<br>
+      Bedeninle aynı tarafta kalarak.<br>
   - id: "book"
     type: "text"
     body: |-
-      Çalışma Süreci,<br>
+      Çalışma süreci düzenli buluşmalarla,<br>
+      adım adım ilerler ve hayatına yansır.<br>
       <br>
-      düzenli buluşmalarla, adım adım ilerler ve hayatına yansır.<br>
-      <br>
-      tek seanslık bir müdahale değildir.<br>
+      Tek seanslık bir müdahale değildir.<br>
   - id: "section_p1uxt9"
     type: "text"
     body: |-
-      Çalışma ve Etkisi,<br>
+      Çalışma pratiğin ve etkisi,<br>
+      günlük hayatında devam eder.<br>
       <br>
-      günlük hayatta devam eder,<br>
-      ortaya çıkan kalıntıları sindirmek,<br>
+      Ortaya çıkan kalıntıları sindirmek,<br>
       öğrendiklerini günlük hayata<br>
-      gerçekten taşıyabilmek<br>
-      <br>
+      gerçekten taşıyabilmek,
       zaman ve tekrar gerektirir.<br>
   - id: "section_ayaetf"
     type: "text"
     body: |-
-      Sana Uygun mu?<br>
+      Sana uygun mu?<br>
       <br>
-      yüzeysel rahatlama yerine<br>
-      düzenli çalışmayla hayatında gerçek bir değişim oluşturmayı göze alıyorsan,<br>
+      Yüzeysel rahatlama yerine<br>
+      düzenli çalışmayla hayatında gerçek bir değişim yaratmak istiyorsan<br>
       <br>
-      bedeninle çalışmaya<br>
+      Bedeninle çalışmaya<br>
       ve alışkanlıklarını dönüştürmeye kararlıysan<br>
       <br>
-      bu yöntemle yoluna başlayabilirsin.<br>
+      Grinberg Metot sürecine başlayabilirsin.<br>
       <br><br>
       <a class="ac-button" target="_blank" href="{{whatsapp_link}}" data-analytics-title="book a session">randevu al</a>
