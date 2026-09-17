@@ -326,13 +326,12 @@
             </div>
           </div>
 
-          <!-- Admin Quick Access (Only rendered when ?admin is present in URL) -->
-          ${isAdminMode ? `
-          <div style="margin-top:16px;text-align:center;">
+          <!-- Admin Quick Access (hidden unless ?admin is in URL) -->
+          <div id="adminToggleWrapper" style="margin-top:16px;text-align:center;display:none;">
             <button type="button" class="admin-badge" id="adminToggleBtn" style="background:none;border:none;font:inherit;">⚙ Ayarları Düzenle</button>
           </div>
           <div class="admin-panel" id="adminPanel">
-            <h5 style="margin:0 0 8px;font-size:14px;color:var(--text);">Seans & Pushover Ayarları</h5>
+            <h5 style="margin:0 0 8px;font-size:14px;color:var(--text);">Seans &amp; Pushover Ayarları</h5>
             <div class="admin-grid">
               <div class="booking-field">
                 <label>Başlangıç Saati (Örn: 10)</label>
@@ -363,7 +362,6 @@
               <button type="button" class="btn-primary" id="admSaveBtn">Ayarları Kaydet</button>
             </div>
           </div>
-          ` : ''}
         </div>
       </div>
     `;
@@ -396,22 +394,23 @@
     document.getElementById('btnCancelForm').addEventListener('click', closeForm);
     btnSubmit.addEventListener('click', handleSubmit);
 
-    // Admin toggle and save (if in admin mode)
-    if (isAdminMode) {
-      const adminToggle = document.getElementById('adminToggleBtn');
-      const adminPanel = document.getElementById('adminPanel');
-      if (adminToggle && adminPanel) {
-        adminToggle.addEventListener('click', (e) => {
-          e.stopPropagation();
-          adminPanel.classList.toggle('is-open');
-          if (adminPanel.classList.contains('is-open')) {
-            setTimeout(() => adminPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
-          }
-        });
-      }
+    // Admin toggle and save
+    const adminToggleWrapper = document.getElementById('adminToggleWrapper');
+    const adminToggle = document.getElementById('adminToggleBtn');
+    const adminPanel = document.getElementById('adminPanel');
 
-      const admSaveBtn = document.getElementById('admSaveBtn');
-      if (admSaveBtn) {
+    if (adminToggle && adminPanel) {
+      adminToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        adminPanel.classList.toggle('is-open');
+        if (adminPanel.classList.contains('is-open')) {
+          setTimeout(() => adminPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+        }
+      });
+    }
+
+    const admSaveBtn = document.getElementById('admSaveBtn');
+    if (admSaveBtn) {
         admSaveBtn.addEventListener('click', () => {
           const sh = parseInt(document.getElementById('admStartH').value, 10) || 10;
           const dur = parseInt(document.getElementById('admDuration').value, 10) || 90;
@@ -437,7 +436,6 @@
           renderSlots();
         });
       }
-    }
   };
 
   const updateModalTexts = () => {
@@ -462,6 +460,9 @@
     renderDates();
     renderSlots();
     closeForm();
+    // Show/hide admin section based on current URL param
+    const adminWrapper = document.getElementById('adminToggleWrapper');
+    if (adminWrapper) adminWrapper.style.display = isAdminMode ? 'block' : 'none';
     modalEl.classList.add('is-visible');
     document.body.style.overflow = 'hidden';
   };
