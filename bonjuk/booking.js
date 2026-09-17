@@ -21,8 +21,8 @@
     cutoffMinute: 30,
     startDate: '2026-09-17',
     endDate: '2026-09-22',
-    pushoverUserKey: '', // User to fill
-    pushoverAppToken: ''  // User to fill
+    pushoverUserKey: 'u5x77gvh9yniz2ccy8zx929z6ppo2n',
+    pushoverAppToken: 'azep72gh6houi1huqoyt2skmucdtrn'
   };
 
   const STORAGE_KEY_BOOKINGS = 'ekinyasa_bonjuk_bookings';
@@ -36,6 +36,13 @@
       activeConfig = Object.assign(activeConfig, JSON.parse(savedConfig));
     }
   } catch (e) {}
+
+  // Ensure hardcoded keys are present if localStorage had empty strings
+  if (!activeConfig.pushoverUserKey) activeConfig.pushoverUserKey = DEFAULT_CONFIG.pushoverUserKey;
+  if (!activeConfig.pushoverAppToken) activeConfig.pushoverAppToken = DEFAULT_CONFIG.pushoverAppToken;
+
+  // Check if admin mode is requested via URL parameter (e.g. ?admin or ?admin=1)
+  const isAdminMode = new URLSearchParams(window.location.search).has('admin');
 
   // State
   let currentSelectedDate = activeConfig.startDate;
@@ -204,8 +211,11 @@
             </div>
           </div>
 
-          <!-- Admin Quick Access -->
-          <span class="admin-badge" id="adminToggleBtn">⚙ Ayarları Düzenle</span>
+          <!-- Admin Quick Access (Only rendered when ?admin is present in URL) -->
+          ${isAdminMode ? `
+          <div style="margin-top:16px;text-align:center;">
+            <button type="button" class="admin-badge" id="adminToggleBtn" style="background:none;border:none;font:inherit;">⚙ Ayarları Düzenle</button>
+          </div>
           <div class="admin-panel" id="adminPanel">
             <h5 style="margin:0 0 8px;font-size:14px;color:var(--text);">Seans & Pushover Ayarları</h5>
             <div class="admin-grid">
@@ -238,6 +248,7 @@
               <button type="button" class="btn-primary" id="admSaveBtn">Ayarları Kaydet</button>
             </div>
           </div>
+          ` : ''}
         </div>
       </div>
     `;
@@ -263,38 +274,44 @@
     document.getElementById('btnCancelForm').addEventListener('click', closeForm);
     btnSubmit.addEventListener('click', handleSubmit);
 
-    // Admin toggle
-    const adminToggle = document.getElementById('adminToggleBtn');
-    const adminPanel = document.getElementById('adminPanel');
-    adminToggle.addEventListener('click', () => {
-      adminPanel.classList.toggle('is-open');
-    });
+    // Admin toggle and save (if in admin mode)
+    if (isAdminMode) {
+      const adminToggle = document.getElementById('adminToggleBtn');
+      const adminPanel = document.getElementById('adminPanel');
+      if (adminToggle && adminPanel) {
+        adminToggle.addEventListener('click', () => {
+          adminPanel.classList.toggle('is-open');
+        });
+      }
 
-    // Admin save
-    document.getElementById('admSaveBtn').addEventListener('click', () => {
-      const sh = parseInt(document.getElementById('admStartH').value, 10) || 10;
-      const dur = parseInt(document.getElementById('admDuration').value, 10) || 90;
-      const brk = parseInt(document.getElementById('admBreak').value, 10) || 5;
-      const cutoffStr = document.getElementById('admCutoff').value || '19:30';
-      const parts = cutoffStr.split(':');
-      const ch = parseInt(parts[0], 10) || 19;
-      const cm = parseInt(parts[1], 10) || 30;
+      const admSaveBtn = document.getElementById('admSaveBtn');
+      if (admSaveBtn) {
+        admSaveBtn.addEventListener('click', () => {
+          const sh = parseInt(document.getElementById('admStartH').value, 10) || 10;
+          const dur = parseInt(document.getElementById('admDuration').value, 10) || 90;
+          const brk = parseInt(document.getElementById('admBreak').value, 10) || 5;
+          const cutoffStr = document.getElementById('admCutoff').value || '19:30';
+          const parts = cutoffStr.split(':');
+          const ch = parseInt(parts[0], 10) || 19;
+          const cm = parseInt(parts[1], 10) || 30;
 
-      activeConfig.startHour = sh;
-      activeConfig.durationMinutes = dur;
-      activeConfig.breakMinutes = brk;
-      activeConfig.cutoffHour = ch;
-      activeConfig.cutoffMinute = cm;
-      activeConfig.pushoverUserKey = document.getElementById('admPushoverUser').value.trim();
-      activeConfig.pushoverAppToken = document.getElementById('admPushoverToken').value.trim();
+          activeConfig.startHour = sh;
+          activeConfig.durationMinutes = dur;
+          activeConfig.breakMinutes = brk;
+          activeConfig.cutoffHour = ch;
+          activeConfig.cutoffMinute = cm;
+          activeConfig.pushoverUserKey = document.getElementById('admPushoverUser').value.trim();
+          activeConfig.pushoverAppToken = document.getElementById('admPushoverToken').value.trim();
 
-      try {
-        localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(activeConfig));
-      } catch (e) {}
+          try {
+            localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(activeConfig));
+          } catch (e) {}
 
-      alert('Ayarlar kaydedildi!');
-      renderSlots();
-    });
+          alert('Ayarlar kaydedildi!');
+          renderSlots();
+        });
+      }
+    }
   };
 
   const openModal = () => {

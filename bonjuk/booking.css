@@ -100,7 +100,7 @@
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding-bottom: 12px;
+  padding: 2px 2px 14px;
   margin-bottom: 16px;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
@@ -115,29 +115,34 @@
   border: 1px solid var(--border);
   background: var(--navCTAbg);
   color: var(--text);
-  border-radius: 14px;
-  padding: 8px 14px;
+  border-radius: 12px;
+  padding: 8px 12px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 72px;
+  justify-content: center;
+  min-width: 66px;
   transition: all 0.2s ease;
   font-family: inherit;
+  box-sizing: border-box;
 }
 
 .booking-date-btn .date-day {
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: var(--muted);
   font-weight: 500;
+  line-height: 1.2;
 }
 
 .booking-date-btn .date-num {
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 600;
-  margin-top: 2px;
+  margin-top: 3px;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 .booking-date-btn.is-selected {
