@@ -448,3 +448,62 @@
   gap: 12px;
   margin-top: 10px;
 }
+
+/* ── Light-mode contrast fixes ───────────────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  /* Header */
+  .booking-header__title  { color: #1d1d1f; }
+  .booking-header__subtitle { color: #48484a; }
+
+  /* Date pills */
+  .booking-date-btn { color: #1d1d1f; }
+  .booking-date-btn .date-day { color: #48484a; }
+  .booking-date-btn .date-num { color: #1d1d1f; }
+
+  /* Slot cards */
+  .slot-time          { color: #1d1d1f; }
+  .slot-status-text   { color: #48484a; }
+  .slot-occupant-name { color: #1d1d1f; }
+
+  /* Slot card surfaces */
+  .booking-slot-card { background: rgba(255,255,255,0.55); }
+  .booking-slot-card:hover:not(.is-occupied) { background: rgba(255,255,255,0.75); }
+  .booking-slot-card.is-occupied { background: rgba(0,0,0,0.04); }
+
+  /* Form overlay — soften from stark white */
+  .booking-form-overlay {
+    background: rgba(245,245,247,0.94);
+    border-color: rgba(0,0,0,0.10);
+  }
+  .booking-form-overlay h4 {
+    color: #1d1d1f;
+    font-weight: 500;
+  }
+  .booking-form-overlay p { color: #48484a; }
+  .booking-field label { color: #3a3a3c; font-weight: 400; }
+  .booking-field input {
+    background: rgba(255,255,255,0.85);
+    color: #1d1d1f;
+    border-color: rgba(0,0,0,0.15);
+  }
+
+  /* Notice box */
+  .booking-notice-box {
+    background: rgba(0,0,0,0.04);
+    border-color: rgba(0,0,0,0.10);
+    color: #48484a;
+  }
+  .booking-notice-box strong { color: #1d1d1f; }
+
+  /* Agreement text */
+  .booking-agreement span { color: #3a3a3c; }
+
+  /* Ghost button */
+  .btn-ghost { color: #3a3a3c; border-color: rgba(0,0,0,0.18); }
+
+  /* Close button */
+  .booking-close-btn { color: #1d1d1f; }
+
+  /* Admin badge */
+  .admin-badge { color: #6e6e73; }
+}

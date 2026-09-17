@@ -401,8 +401,12 @@
       const adminToggle = document.getElementById('adminToggleBtn');
       const adminPanel = document.getElementById('adminPanel');
       if (adminToggle && adminPanel) {
-        adminToggle.addEventListener('click', () => {
+        adminToggle.addEventListener('click', (e) => {
+          e.stopPropagation();
           adminPanel.classList.toggle('is-open');
+          if (adminPanel.classList.contains('is-open')) {
+            setTimeout(() => adminPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+          }
         });
       }
 
