@@ -30,8 +30,9 @@ sections:
   - id: "two"
     type: "text"
     body: |-
-      Bedeninde Kalmayı Öğren;<br>
-      düzeltmeden, zorlamadan, kaçmadan..
+      <span class="big">Bedeninde</span>
+      <span class="mid">kalmayı öğren</span>
+      <span class="small">düzeltmeden, zorlamadan, kaçmadan..</span>
   - id: "three"
     type: "text"
     body: |-

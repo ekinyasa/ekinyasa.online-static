@@ -817,6 +817,13 @@ main.container section.view:nth-of-type(3n)::before {
     );
 }
 
+main.container section#two{
+  p{display: inline-flex;flex-direction: column;font-family: SF Pro Display,SF Pro Icons,Helvetica Neue, Helvetica, Arial, sans-serif;}
+  span.big{font-size: 5vw; font-style: normal; font-weight: bold; letter-spacing: 2px; line-height: 84px;color: dimgrey;}
+  span.mid{font-size: 3.9vw; color: var(--text); font-weight: 500;}
+  span.small{font-size: 1.3vw; color: darkgrey; font-weight: 500;}
+}
+
 
 .view a{text-decoration: underline;}
 
