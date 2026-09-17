@@ -3,10 +3,11 @@
 (function () {
   const mobileQuery = window.matchMedia('(max-width: 768px)');
   const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  let initialized = false;
+  let drawerInitialized = false;
+  let activeObserver = null;
 
   const initMobileUi = () => {
-    if (!mobileQuery.matches || initialized) {
+    if (!mobileQuery.matches) {
       return;
     }
     const body = document.body;
@@ -21,7 +22,6 @@
     if (!sections.length) {
       return;
     }
-    initialized = true;
     const prefersReduced = reduceMotionQuery.matches;
 
     sections.forEach((section) => {
@@ -35,6 +35,10 @@
     const dotsNav = document.querySelector('.m-dots');
     if (dotsNav) {
       dotsNav.innerHTML = '';
+      if (activeObserver) {
+        activeObserver.disconnect();
+        activeObserver = null;
+      }
       const dotButtons = [];
       if (sections.length > 1) {
         sections.forEach((section, index) => {
@@ -56,7 +60,7 @@
           });
         };
         setActive(0);
-        const activeObserver = new IntersectionObserver(
+        activeObserver = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
               if (!entry.isIntersecting) {
@@ -71,10 +75,14 @@
           { root: container, threshold: 0.55 }
         );
         sections.forEach((section) => activeObserver.observe(section));
+        dotsNav.style.display = '';
       } else {
         dotsNav.style.display = 'none';
       }
     }
+
+    if (drawerInitialized) return;
+    drawerInitialized = true;
 
     const drawer = document.querySelector('.m-drawer');
     if (drawer) {
@@ -295,7 +303,7 @@
   }
 
   const mediaChangeHandler = (event) => {
-    if (event.matches && !initialized) {
+    if (event.matches) {
       initMobileUi();
     }
   };

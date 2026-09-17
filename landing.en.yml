@@ -1,0 +1,107 @@
+contact:
+  phone: "+905325790673"
+  phone_display: "+90  532  579  06  73"
+  whatsapp_message: "Hello, I am contacting you via your website ekinyasa.online."
+  email: "sessions@ekinyasa.online"
+  instagram: "https://www.instagram.com/ekinyasa.ankara"
+  instagram_handle: "@ekinyasa.ankara"
+contact_links:
+  - tag: "INSTAGRAM"
+    label: "@ekinyasa.ankara"
+    url: "https://www.instagram.com/ekinyasa.ankara"
+  - tag: "official"
+    label: "grinbergmethod.com"
+    url: "https://www.grinbergmethod.com"
+  - tag: "Türkçe"
+    label: "grinbergmethod.com.tr"
+    url: "https://www.grinbergmethod.com.tr"
+  - tag: "Grinberg Method"
+    label: "Code of Professional Ethics"
+    url: "https://www.grinbergmethod.com.tr/etik.html"
+sections:
+  - id: "one"
+    type: "image"
+    figure:
+      small-light: "./1920/new-hero-white-loose.webp"
+      small-dark: "./1920/new-hero-black-loose.webp"
+      light: "./1920/new-hero-white.png"
+      dark: "./1920/new-hero-black.png"
+      alt: ""
+  - id: "two"
+    type: "text"
+    body: |-
+      <span class="big">Learn to stay</span>
+      <span class="mid">in your body</span>
+      <span class="small">without fixing, forcing, or escaping..</span>
+  - id: "three"
+    type: "text"
+    body: |-
+      The Grinberg Method,<br>
+      is an unconventional approach where you learn<br>
+      to direct and use your attention most effectively.<br>
+      <br>
+      It is practiced one-on-one and through touch.<br>
+      <br>
+      When needed, group sessions and<br>
+      various practical tools accompany the process.
+  - id: "four"
+    type: "image"
+    figure:
+      light: "./1920/assesement-l.png"
+      dark: "./1920/assesement-d.png"
+      alt: ""
+  - id: "five"
+    type: "text"
+    body: |-
+      Individual sessions teach you<br>
+      to perceive ingrained bodily habits.<br>
+      <br>
+      And how to transform your relationship with these conditioned patterns.<br>
+      <br>
+      It is not a massage designed merely to “feel good”.
+  - id: "section_jzaop5"
+    type: "image"
+    figure:
+      light: "./1920/w-handson-d.png"
+      dark: "./1920/w-handson-l.png"
+      alt: ""
+  - id: "six"
+    type: "text"
+    body: |-
+      We work with bodily reactions<br>
+      that you are unaware of or keep repressed.<br>
+      <br>
+      Pain, stress, fear, intense emotional states..<br>
+      <br><br>
+      Without escaping,<br>
+      without fixing.<br>
+      <br>
+      Staying on the same side as your body.<br>
+  - id: "book"
+    type: "text"
+    body: |-
+      The process progresses step by step<br>
+      through regular sessions and integrates into your life.<br>
+      <br>
+      It is not a one-off quick fix.<br>
+  - id: "section_p1uxt9"
+    type: "text"
+    body: |-
+      Your practice and its impact<br>
+      continue in your daily life.<br>
+      <br>
+      Digesting what surfaces and truly integrating<br>
+      what you learn into your everyday reality<br>
+      takes time and repetition.<br>
+  - id: "section_ayaetf"
+    type: "text"
+    body: |-
+      Is it right for you?<br>
+      If you seek genuine transformation through consistent practice rather than superficial relief<br>
+      <br>
+      If you are committed to working with your body<br>
+      and shifting your habitual patterns<br>
+      <br>
+      You can begin your journey with the Grinberg Method.<br>
+      <br><br>
+      <a class="ac-button" target="_blank" href="{{whatsapp_link}}" data-analytics-title="book a session">book a session</a>

@@ -4,9 +4,57 @@
   if (!Object.prototype.hasOwnProperty.call(window, '__contentReady')) {
     window.__contentReady = false;
   }
-  const MARKDOWN_URL = 'landing.yml';
   const EVENT_NAME = 'content:ready';
   let historySynced = false;
+
+  const I18N_LABELS = {
+    tr: {
+      toggleText: 'EN',
+      toggleAria: 'İngilizce sayfaya geç',
+      navBook: 'Randevu',
+      privacy: 'Gizlilik Politikası',
+      disclaimer: 'Yasal Feragatname',
+      copyright: 'Copyright © 2026 Ekin Yaşa Online Tüm hakları saklıdır.',
+      rights: 'Tüm hakları saklıdır.',
+      ethics: 'Mesleki Etik',
+      cookies: 'Çerez Tercihleri',
+      gm: 'Grinberg Metot',
+      copyTip: 'kopyala',
+      copiedTip: 'kopyaladın '
+    },
+    en: {
+      toggleText: 'TR',
+      toggleAria: 'Switch to Turkish',
+      navBook: 'Book',
+      privacy: 'Privacy Policy',
+      disclaimer: 'Legal Disclaimer',
+      copyright: 'Copyright © 2026 Ekin Yaşa Online All rights reserved.',
+      rights: 'All rights reserved.',
+      ethics: 'Professional Ethics',
+      cookies: 'Cookie Preferences',
+      gm: 'Grinberg Method',
+      copyTip: 'copy',
+      copiedTip: 'copied '
+    }
+  };
+
+  const getInitialLanguage = () => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const urlLang = params.get('lang');
+      if (urlLang === 'en' || urlLang === 'tr') {
+        return urlLang;
+      }
+      const stored = localStorage.getItem('ekinyasa_lang');
+      if (stored === 'en' || stored === 'tr') {
+        return stored;
+      }
+    } catch (_) {}
+    return 'tr';
+  };
+
+  let currentLang = getInitialLanguage();
+  const getMarkdownUrl = (lang) => (lang === 'en' ? 'landing.en.yml' : 'landing.yml');
 
   const sectionsRoot = document.querySelector('[data-sections-root]');
   const PROGRESSIVE_SELECTOR = 'picture[data-progressive-image="true"]';
@@ -432,14 +480,70 @@
     });
   };
 
+  const updateStaticUI = (lang) => {
+    const labels = I18N_LABELS[lang] || I18N_LABELS.tr;
+    document.documentElement.lang = lang;
+
+    document.querySelectorAll('[data-lang-toggle]').forEach((btn) => {
+      btn.setAttribute('aria-label', labels.toggleAria);
+    });
+
+    document.querySelectorAll('[data-lang-text]').forEach((el) => {
+      el.textContent = labels.toggleText;
+    });
+
+    document.querySelectorAll('[data-i18n-nav-book]').forEach((el) => {
+      el.textContent = labels.navBook;
+    });
+
+    document.querySelectorAll('[data-i18n-privacy]').forEach((el) => {
+      el.textContent = labels.privacy;
+    });
+
+    document.querySelectorAll('[data-i18n-disclaimer]').forEach((el) => {
+      el.textContent = labels.disclaimer;
+    });
+
+    document.querySelectorAll('[data-i18n-copyright]').forEach((el) => {
+      el.textContent = labels.copyright;
+    });
+
+    document.querySelectorAll('[data-i18n-rights]').forEach((el) => {
+      el.textContent = labels.rights;
+    });
+
+    document.querySelectorAll('[data-i18n-ethics]').forEach((el) => {
+      el.textContent = labels.ethics;
+    });
+
+    document.querySelectorAll('[data-i18n-cookies]').forEach((el) => {
+      el.textContent = labels.cookies;
+    });
+
+    document.querySelectorAll('[data-i18n-gm]').forEach((el) => {
+      el.textContent = labels.gm;
+    });
+
+    document.querySelectorAll('.copy-tip').forEach((el) => {
+      el.textContent = labels.copyTip;
+      el.dataset.originalTip = labels.copyTip;
+      el.dataset.copiedTip = labels.copiedTip;
+    });
+  };
+
   const syncHistory = () => {
     const url = new URL(window.location.href);
     url.hash = 'landing';
+    if (currentLang === 'en') {
+      url.searchParams.set('lang', 'en');
+    } else {
+      url.searchParams.delete('lang');
+    }
     if (!historySynced) {
-      history.pushState({ view: 'landing' }, '', url.toString());
+      history.pushState({ view: 'landing', lang: currentLang }, '', url.toString());
       historySynced = true;
     } else {
-      history.replaceState({ view: 'landing' }, '', url.toString());
+      history.replaceState({ view: 'landing', lang: currentLang }, '', url.toString());
     }
   };
 
@@ -455,7 +559,7 @@
     fallback.className = 'view';
     const body = document.createElement('div');
     body.className = 'section-body';
-    body.textContent = message || 'İçerik yüklenemedi.';
+    body.textContent = message || (currentLang === 'en' ? 'Content could not be loaded.' : 'İçerik yüklenemedi.');
     fallback.appendChild(body);
     sectionsRoot.appendChild(fallback);
   };
@@ -467,12 +571,17 @@
     };
     renderSections(meta.sections || [], context);
     updateContactInfo(meta, context);
+    updateStaticUI(currentLang);
     syncHistory();
     dispatchContentReady();
   };
 
-  const loadLanding = () => {
-    fetch(MARKDOWN_URL, { cache: 'no-cache' })
+  const loadLanding = (lang) => {
+    if (lang) {
+      currentLang = lang;
+    }
+    const fileUrl = getMarkdownUrl(currentLang);
+    fetch(fileUrl, { cache: 'no-cache' })
       .then((response) => {
         if (!response.ok) {
           throw new Error('İçerik yüklenemedi.');
@@ -485,19 +594,53 @@
       })
       .catch((error) => {
         console.error(error);
-        showError('İçerik yüklenemedi.');
+        showError(currentLang === 'en' ? 'Content could not be loaded.' : 'İçerik yüklenemedi.');
       });
   };
 
+  const toggleLanguage = () => {
+    const nextLang = currentLang === 'tr' ? 'en' : 'tr';
+    currentLang = nextLang;
+    try {
+      localStorage.setItem('ekinyasa_lang', nextLang);
+    } catch (_) {}
+    loadLanding(nextLang);
+  };
+
+  const initLangButtons = () => {
+    document.querySelectorAll('[data-lang-toggle]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleLanguage();
+      });
+    });
+  };
+
   window.addEventListener('popstate', (event) => {
+    const params = new URLSearchParams(window.location.search);
+    const urlLang = params.get('lang') === 'en' ? 'en' : 'tr';
+    if (urlLang !== currentLang) {
+      currentLang = urlLang;
+      try {
+        localStorage.setItem('ekinyasa_lang', currentLang);
+      } catch (_) {}
+      loadLanding(currentLang);
+      return;
+    }
     if (!event.state || event.state.view !== 'landing') {
       const url = new URL(window.location.href);
       url.hash = 'landing';
-      history.replaceState({ view: 'landing' }, '', url.toString());
+      history.replaceState({ view: 'landing', lang: currentLang }, '', url.toString());
     }
   });
 
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLangButtons, { once: true });
+  } else {
+    initLangButtons();
+  }
+
   if (sectionsRoot) {
-    loadLanding();
+    loadLanding(currentLang);
   }
 })();

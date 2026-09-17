@@ -174,8 +174,7 @@
             <div class="liquidGlass-tint"></div>
             <div class="liquidGlass-shine"></div>
             <div class="liquidGlass-text">
-              <span> Randevu
-              </span>
+              <span data-i18n-nav-book>Randevu</span>
             </div>
           </div>
         </a>
@@ -253,6 +252,16 @@
           </div>
         </a>
 
+        <button type="button" class="nav-cta nav-icon nav-lang-btn" data-lang-toggle aria-label="Switch Language">
+          <div class="liquidGlass-wrapper button round">
+            <div class="liquidGlass-effect2"></div>
+            <div class="liquidGlass-tint"></div>
+            <div class="liquidGlass-shine"></div>
+            <div class="liquidGlass-text">
+              <span data-lang-text>EN</span>
+            </div>
+          </div>
+        </button>
 
         <div class="nav-wrapper">
 
@@ -676,11 +685,22 @@
                                       c0.1-0.1,0-0.4,0-0.5C7.4,5.9,7.2,5.4,7.1,5.1z" />
                               </g>
                             </svg>
-                  <span style="font-weight: 200;color: var(--text);">Randevu</span>
+                  <span data-i18n-nav-book style="font-weight: 200;color: var(--text);">Randevu</span>
                 </span>
               </div>
             </div>
           </a>
+          <button class="nav-cta nav-icon nav-lang-btn" type="button" data-lang-toggle
+            aria-label="Switch Language">
+            <div class="liquidGlass-wrapper button round">
+              <div class="liquidGlass-effect2"></div>
+              <div class="liquidGlass-tint"></div>
+              <div class="liquidGlass-shine"></div>
+              <div class="liquidGlass-text">
+                <span data-lang-text>EN</span>
+              </div>
+            </div>
+          </button>
           <button id="draveropener" class="nav-cta nav-icon nav-toggle" type="button" data-drawer-toggle
             aria-label="Bilgi menüsü" aria-expanded="false">
             <div class="liquidGlass-wrapper button round">
@@ -859,16 +879,15 @@
                   <div class="contact links_row">
                     <div class="sub_links_group" data-contact-links></div>
                     <div class="sub_links_row">
-                      <a href="./gizlilik-politikasi">Gizlilik
-                        Politikası</a>
+                      <a href="./gizlilik-politikasi" data-i18n-privacy>Gizlilik Politikası</a>
                     </div>
 
                     <div class="sub_links_row single_line">
-                      <a href="./feragatname">Yasal Feragatname</a>
+                      <a href="./feragatname" data-i18n-disclaimer>Yasal Feragatname</a>
                     </div>
 
                     <div class="sub_links_row single_line">
-                      <span>
+                      <span data-i18n-copyright>
                         Copyright © 2026 Ekin Yaşa Online Tüm hakları saklıdır.
                       </span>
                     </div>
@@ -897,16 +916,16 @@
 
   <footer class="site-footer">
     <div class="container">
-      <p>Copyright © 2026 Ekin Yaşa Online <span
-          class="dot">·</span> Tüm hakları saklıdır. <span class="dot">·</span>
-        <a href="./gizlilik-politikasi">Gizlilik Politikası</a> <span class="dot">·</span>
-        <a href="./feragatname">Yasal Feragatname</a> <span
+      <p><span data-i18n-footer-prefix>Copyright © 2026 Ekin Yaşa Online</span> <span
+          class="dot">·</span> <span data-i18n-rights>Tüm hakları saklıdır.</span> <span class="dot">·</span>
+        <a href="./gizlilik-politikasi" data-i18n-privacy>Gizlilik Politikası</a> <span class="dot">·</span>
+        <a href="./feragatname" data-i18n-disclaimer>Yasal Feragatname</a> <span
           class="dot">·</span>
-        <a href="https://www.grinbergmethod.com.tr/etik.html" target="_blank">Mesleki Etik</a> <span
+        <a href="https://www.grinbergmethod.com.tr/etik.html" target="_blank" data-i18n-ethics>Mesleki Etik</a> <span
           class="dot">·</span>
-        <a href="index.html#" onclick="window.openCookiePreferences(); return false;">Çerez Tercihleri</a> <span
+        <a href="index.html#" onclick="window.openCookiePreferences(); return false;" data-i18n-cookies>Çerez Tercihleri</a> <span
           class="dot">·</span>
-        <a href="https://www.grinbergmethod.com.tr" target="_blank" rel="noopener">Grinberg Metot</a>
+        <a href="https://www.grinbergmethod.com.tr" target="_blank" rel="noopener" data-i18n-gm>Grinberg Metot</a>
       </p>
     </div>
   </footer>
@@ -921,15 +940,16 @@
     (function () {
       const body = document.body;
       if (!body.classList.contains('public-view')) return;
-      let initialized = false;
+      let sectionObserver = null;
       const initSectionScroller = () => {
-        if (initialized) return;
         const container = document.querySelector('main.container');
         if (!container) return;
         const sections = Array.from(container.querySelectorAll('section.view'));
         if (!sections.length) return;
-        initialized = true;
-        const sectionObserver = new IntersectionObserver((entries) => {
+        if (sectionObserver) {
+          sectionObserver.disconnect();
+        }
+        sectionObserver = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
               entry.target.classList.add('is-visible');
@@ -1033,9 +1053,10 @@
           const text = item.dataset.copy;
           if (!text) return;
           navigator.clipboard.writeText(text).then(() => {
-            tip.textContent = "kopyaladın ";
+            const copiedText = tip.dataset.copiedTip || "kopyaladın ";
+            tip.textContent = copiedText;
             setTimeout(() => {
-              tip.textContent = tip.dataset.originalTip || "tıkla - kopyala";
+              tip.textContent = tip.dataset.originalTip || "kopyala";
             }, 1500);
           });
         });
