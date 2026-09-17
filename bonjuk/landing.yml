@@ -1,0 +1,109 @@
+contact:
+  phone: "+905325790673"
+  phone_display: "+90  532  579  06  73"
+  whatsapp_message: "Merhaba, ekinyasa.online siteniz üzerinden ulaşıyorum."
+  email: "sessions@ekinyasa.online"
+  instagram: "https://www.instagram.com/ekinyasa.ankara"
+  instagram_handle: "@ekinyasa.ankara"
+contact_links:
+  - tag: "INSTAGRAM"
+    label: "@ekinyasa.ankara"
+    url: "https://www.instagram.com/ekinyasa.ankara"
+  - tag: "official"
+    label: "grinbergmethod.com"
+    url: "https://www.grinbergmethod.com"
+  - tag: "Türkçe"
+    label: "grinbergmethod.com.tr"
+    url: "https://www.grinbergmethod.com.tr"
+  - tag: "Grınberg Metot"
+    label: "Mesleki Etik Kuralları"
+    url: "https://www.grinbergmethod.com.tr/etik.html"
+sections:
+  - id: "one"
+    type: "image"
+    figure:
+      small-light: "../1920/new-hero-white-loose.webp"
+      small-dark: "../1920/new-hero-black-loose.webp"
+      light: "../1920/new-hero-white.png"
+      dark: "../1920/new-hero-black.png"
+      alt: ""
+  - id: "two"
+    type: "text"
+    body: |-
+      Bedeninde Kalmayı Öğren;<br>
+      düzeltmeden, zorlamadan, kaçmadan..
+  - id: "three"
+    type: "text"
+    body: |-
+      Grinberg Metot Çalışması,<br>
+      dikkatini en etkin şekilde kullanmayı öğrendiğin,<br>
+      alışılmışın dışında bir yöntemdir.<br>
+      <br>
+      Bire-bir ve temasla uygulanır.<br>
+      <br>
+      Gerektiğinde grup çalışmaları ve<br>
+      farklı pratik araçlar da sürece eşlik eder.
+  - id: "four"
+    type: "image"
+    figure:
+      light: "../1920/assesement-l.png"
+      dark: "../1920/assesement-d.png"
+      alt: ""
+  - id: "five"
+    type: "text"
+    body: |-
+      Kişisel seanslar;<br>
+      bedeninde yerleşmiş alışkanlıkları fark etmeyi öğretir.<br>
+      <br>
+      Ve bu yerleşik kalıplarla kurduğun ilişkiyi nasıl değiştireceğini.<br>
+      <br>
+      “iyi gelsin” diye uygulanan bir masaj değildir.
+  - id: "section_jzaop5"
+    type: "image"
+    figure:
+      light: "../1920/w-handson-d.png"
+      dark: "../1920/w-handson-l.png"
+      alt: ""
+  - id: "six"
+    type: "text"
+    body: |-
+      Farkında olamadığın ve baskı altında tuttuğun<br>
+      bedensel tepkilerinle çalışırız.<br>
+      <br>
+      Ağrı, stres, korku, yoğun duygu halleri..<br>
+      <br><br>
+      Kaçmadan,<br>
+      düzeltmeden.<br>
+      <br>
+      Bedeninle aynı tarafta kalarak.<br>
+  - id: "book"
+    type: "text"
+    body: |-
+      Çalışma süreci düzenli buluşmalarla,<br>
+      adım adım ilerler ve hayatına yansır.<br>
+      <br>
+      Tek seanslık bir müdahale değildir.<br>
+  - id: "section_p1uxt9"
+    type: "text"
+    body: |-
+      Çalışma pratiğin ve etkisi,<br>
+      günlük hayatında devam eder.<br>
+      <br>
+      Ortaya çıkan kalıntıları sindirmek,<br>
+      öğrendiklerini günlük hayata<br>
+      gerçekten taşıyabilmek,
+      zaman ve tekrar gerektirir.<br>
+  - id: "section_ayaetf"
+    type: "text"
+    body: |-
+      Sana uygun mu?<br>
+      <br>
+      Yüzeysel rahatlama yerine<br>
+      düzenli çalışmayla hayatında gerçek bir değişim yaratmak istiyorsan<br>
+      <br>
+      Bedeninle çalışmaya<br>
+      ve alışkanlıklarını dönüştürmeye kararlıysan<br>
+      <br>
+      Grinberg Metot sürecine başlayabilirsin.<br>
+      <br><br>
+      <a class="ac-button" target="_blank" href="{{whatsapp_link}}" data-analytics-title="book a session">randevu al</a>
