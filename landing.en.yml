@@ -30,9 +30,8 @@ sections:
   - id: "two"
     type: "text"
     body: |-
-      <span class="big">Learn to stay</span>
-      <span class="mid">in your body</span>
-      <span class="small">without fixing, forcing, or escaping..</span>
+      Learn to Stay in Your Body;<br>
+      without fixing, forcing, or escaping..
   - id: "three"
     type: "text"
     body: |-
@@ -97,6 +96,7 @@ sections:
     type: "text"
     body: |-
       Is it right for you?<br>
+      <br>
       If you seek genuine transformation through consistent practice rather than superficial relief<br>
       <br>
       If you are committed to working with your body<br>

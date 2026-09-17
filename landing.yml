@@ -30,9 +30,8 @@ sections:
   - id: "two"
     type: "text"
     body: |-
-      <span class="big">Bedeninde</span>
-      <span class="mid">kalmayı öğren</span>
-      <span class="small">düzeltmeden, zorlamadan, kaçmadan..</span>
+      Bedeninde Kalmayı Öğren;<br>
+      düzeltmeden, zorlamadan, kaçmadan..
   - id: "three"
     type: "text"
     body: |-
@@ -98,6 +97,7 @@ sections:
     type: "text"
     body: |-
       Sana uygun mu?<br>
+      <br>
       Yüzeysel rahatlama yerine<br>
       düzenli çalışmayla hayatında gerçek bir değişim yaratmak istiyorsan<br>
       <br>
