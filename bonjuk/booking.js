@@ -44,6 +44,103 @@
   // Check if admin mode is requested via URL parameter (e.g. ?admin or ?admin=1)
   const isAdminMode = new URLSearchParams(window.location.search).has('admin');
 
+  // --- I18N DICTIONARY FOR BOOKING SYSTEM ---
+  const I18N = {
+    tr: {
+      modalTitle: 'Seans Rezervasyonu',
+      modalSubtitle: 'Bonjuk Bay • Birebir Grinberg Seansları',
+      closeAria: 'Kapat',
+      available: 'Müsait',
+      booked: 'Dolu',
+      bookBtn: 'Rezerve Et',
+      cancelBtn: 'İptal Et',
+      bookFormTitle: 'Randevu Rezerve Et: {time}',
+      bookFormDesc: 'Adınızı ve WhatsApp numaranızı girerek bu saati adınıza ayırtabilirsiniz.',
+      cancelFormTitle: 'Randevu İptali: {time}',
+      cancelFormDesc: 'Bu seans "{name}" adına kayıtlıdır. İptal etmek için rezervasyon sırasındaki Ad Soyad ve WhatsApp numaranızı doğru girmelisiniz.',
+      nameLabel: 'Adınız Soyadınız',
+      namePlaceholder: 'Örn: Ekin Yaşa',
+      phoneLabel: 'WhatsApp Telefon Numaranız',
+      phonePlaceholder: '0532 123 45 67',
+      confirmBookBtn: 'Rezervasyonu Onayla',
+      confirmCancelBtn: 'Randevuyu İptal Et',
+      cancelFormBackBtn: 'Vazgeç',
+      noticeText: 'Ben seanstaysam takvimden dilediğin saati hemen kendin için rezerve edebilir ya da iptal edebilirsin, her şekilde hemen bildirim alacağım. O yüzden teyit beklemeden saatinde çalışma alanına gelmen yeterli. Gelemeyeceğin seansı hemen iptal etmen ise, sıkışık takvimi rahatlatmak adına çok önemli. Bir soru veya sorun olursa WhatsApp’tan her zaman yazabilirsin.',
+      agreeNotice: 'Bilgilendirmeyi okudum, anladım ve kabul ediyorum.',
+      errName: 'Lütfen geçerli bir Ad Soyad giriniz.',
+      errPhone: 'Lütfen geçerli bir telefon numarası giriniz.',
+      errAgree: 'Lütfen rezervasyonu onaylamak için bilgilendirme kutucuğunu işaretleyiniz.',
+      errTaken: 'Bu saat dilimi az önce başkası tarafından alındı.',
+      errNotFound: 'Bu saatte zaten aktif bir rezervasyon bulunamadı.',
+      errMismatch: 'Girdiğiniz Ad Soyad veya telefon numarası bu rezervasyonla eşleşmiyor.',
+      successBook: 'Randevunuz başarıyla oluşturuldu: {date} {time}',
+      successCancel: 'Randevunuz başarıyla iptal edildi: {date} {time}',
+      dayNames: ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'],
+      monthNames: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
+      pushNewTitle: '🟢 Yeni Seans Randevusu!',
+      pushCancelTitle: '🔴 Seans İptali!',
+      pushNewBody: '{name} • {date} {time}\nTel: {phone}',
+      pushCancelBody: '{name} • {date} {time} randevusunu iptal etti.'
+    },
+    en: {
+      modalTitle: 'Session Booking',
+      modalSubtitle: 'Bonjuk Bay • 1-on-1 Grinberg Sessions',
+      closeAria: 'Close',
+      available: 'Available',
+      booked: 'Booked',
+      bookBtn: 'Book Now',
+      cancelBtn: 'Cancel',
+      bookFormTitle: 'Book Session: {time}',
+      bookFormDesc: 'Please enter your name and WhatsApp number to reserve this time slot.',
+      cancelFormTitle: 'Cancel Session: {time}',
+      cancelFormDesc: 'This slot is reserved under "{name}". To cancel, please enter the matching Name and WhatsApp number used during booking.',
+      nameLabel: 'Full Name',
+      namePlaceholder: 'e.g. John Doe',
+      phoneLabel: 'WhatsApp Phone Number',
+      phonePlaceholder: '+90 532 123 45 67',
+      confirmBookBtn: 'Confirm Booking',
+      confirmCancelBtn: 'Cancel Session',
+      cancelFormBackBtn: 'Back',
+      noticeText: 'If I am currently in a session, you can directly reserve or cancel any available time slot yourself from the calendar—I will receive an instant notification either way. You can simply arrive at the session space on time without waiting for further confirmation. If you won\'t be able to make it, promptly cancelling your session is very important to help keep the tight schedule manageable. If you have any questions or issues, you can always message me on WhatsApp.',
+      agreeNotice: 'I have read, understood, and agree to the note above.',
+      errName: 'Please enter a valid full name.',
+      errPhone: 'Please enter a valid phone number.',
+      errAgree: 'Please check the agreement box before confirming your booking.',
+      errTaken: 'This time slot was just booked by someone else.',
+      errNotFound: 'No active reservation was found for this time.',
+      errMismatch: 'The provided Name or Phone number does not match this reservation.',
+      successBook: 'Your reservation was confirmed: {date} {time}',
+      successCancel: 'Your reservation was cancelled: {date} {time}',
+      dayNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+      monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      pushNewTitle: '🟢 New Session Booking!',
+      pushCancelTitle: '🔴 Session Cancellation!',
+      pushNewBody: '{name} • {date} {time}\nPhone: {phone}',
+      pushCancelBody: '{name} • cancelled reservation for {date} {time}.'
+    }
+  };
+
+  const getLang = () => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const urlLang = params.get('lang');
+      if (urlLang === 'en' || urlLang === 'tr') return urlLang;
+      const stored = localStorage.getItem('ekinyasa_lang');
+      if (stored === 'en' || stored === 'tr') return stored;
+    } catch (_) {}
+    return 'tr';
+  };
+
+  const t = (key, params = {}) => {
+    const lang = getLang();
+    const dict = I18N[lang] || I18N.tr;
+    let str = dict[key] || I18N.tr[key] || '';
+    Object.keys(params).forEach((p) => {
+      str = str.replace(new RegExp(`\\{${p}\\}`, 'g'), params[p]);
+    });
+    return str;
+  };
+
   // State
   let currentSelectedDate = activeConfig.startDate;
   let currentActionSlot = null;
@@ -103,8 +200,9 @@
     const arr = [];
     const dt = new Date(startStr);
     const end = new Date(endStr);
-    const dayNamesTr = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
-    const monthNamesTr = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+    const lang = getLang();
+    const dayNames = I18N[lang]?.dayNames || I18N.tr.dayNames;
+    const monthNames = I18N[lang]?.monthNames || I18N.tr.monthNames;
 
     while (dt <= end) {
       const yyyy = dt.getFullYear();
@@ -113,9 +211,9 @@
       const iso = `${yyyy}-${mm}-${dd}`;
       arr.push({
         iso: iso,
-        dayName: dayNamesTr[dt.getDay()],
+        dayName: dayNames[dt.getDay()],
         dayNum: dt.getDate(),
-        monthName: monthNamesTr[dt.getMonth()]
+        monthName: monthNames[dt.getMonth()]
       });
       dt.setDate(dt.getDate() + 1);
     }
@@ -158,8 +256,15 @@
   let formOverlay = null;
   let formTitle = null;
   let formDesc = null;
+  let labelName = null;
+  let labelPhone = null;
   let inputName = null;
   let inputPhone = null;
+  let noticeBox = null;
+  let noticeCheckboxContainer = null;
+  let checkAgree = null;
+  let checkAgreeLabel = null;
+  let btnCancelForm = null;
   let btnSubmit = null;
   let alertBox = null;
 
@@ -175,10 +280,10 @@
         <div class="liquidGlass-wrapper dock">
           <div class="booking-header">
             <div>
-              <h3 class="booking-header__title">Seans Rezervasyonu</h3>
-              <div class="booking-header__subtitle">Bonjuk Bay • Birebir Grinberg Seansları</div>
+              <h3 class="booking-header__title" id="bookingModalTitle">${t('modalTitle')}</h3>
+              <div class="booking-header__subtitle" id="bookingModalSubtitle">${t('modalSubtitle')}</div>
             </div>
-            <button class="booking-close-btn" data-booking-close aria-label="Kapat">
+            <button class="booking-close-btn" data-booking-close aria-label="${t('closeAria')}">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -194,20 +299,30 @@
 
           <!-- Booking Form Overlay (for booking & cancellation) -->
           <div class="booking-form-overlay" id="bookingFormOverlay">
-            <h4 id="bookingFormTitle">Rezervasyon Yap</h4>
-            <p id="bookingFormDesc">Lütfen bilgilerinizi giriniz.</p>
+            <h4 id="bookingFormTitle"></h4>
+            <p id="bookingFormDesc"></p>
             <div id="bookingAlert" class="booking-alert"></div>
             <div class="booking-field">
-              <label for="bookName">Adınız Soyadınız</label>
-              <input type="text" id="bookName" placeholder="Örn: Ekin Yaşa" required autocomplete="name" />
+              <label for="bookName" id="lblBookName">${t('nameLabel')}</label>
+              <input type="text" id="bookName" placeholder="${t('namePlaceholder')}" required autocomplete="name" />
             </div>
             <div class="booking-field">
-              <label for="bookPhone">WhatsApp Telefon Numaranız</label>
-              <input type="tel" id="bookPhone" placeholder="0532 123 45 67" required autocomplete="tel" />
+              <label for="bookPhone" id="lblBookPhone">${t('phoneLabel')}</label>
+              <input type="tel" id="bookPhone" placeholder="${t('phonePlaceholder')}" required autocomplete="tel" />
             </div>
+
+            <!-- Mandatory Notice & Agreement for Booking -->
+            <div class="booking-notice-box" id="bookingNoticeBox">
+              ${t('noticeText')}
+            </div>
+            <label class="booking-agreement" id="bookingNoticeCheckboxContainer">
+              <input type="checkbox" id="checkAgreeNotice" />
+              <span id="checkAgreeLabelText">${t('agreeNotice')}</span>
+            </label>
+
             <div class="booking-form-actions">
-              <button type="button" class="btn-ghost" id="btnCancelForm">Vazgeç</button>
-              <button type="button" class="btn-primary" id="btnSubmitForm">Onayla</button>
+              <button type="button" class="btn-ghost" id="btnCancelForm">${t('cancelFormBackBtn')}</button>
+              <button type="button" class="btn-primary" id="btnSubmitForm">${t('confirmBookBtn')}</button>
             </div>
           </div>
 
@@ -261,8 +376,15 @@
     formOverlay = document.getElementById('bookingFormOverlay');
     formTitle = document.getElementById('bookingFormTitle');
     formDesc = document.getElementById('bookingFormDesc');
+    labelName = document.getElementById('lblBookName');
+    labelPhone = document.getElementById('lblBookPhone');
     inputName = document.getElementById('bookName');
     inputPhone = document.getElementById('bookPhone');
+    noticeBox = document.getElementById('bookingNoticeBox');
+    noticeCheckboxContainer = document.getElementById('bookingNoticeCheckboxContainer');
+    checkAgree = document.getElementById('checkAgreeNotice');
+    checkAgreeLabel = document.getElementById('checkAgreeLabelText');
+    btnCancelForm = document.getElementById('btnCancelForm');
     btnSubmit = document.getElementById('btnSubmitForm');
     alertBox = document.getElementById('bookingAlert');
 
@@ -314,8 +436,25 @@
     }
   };
 
+  const updateModalTexts = () => {
+    const titleEl = document.getElementById('bookingModalTitle');
+    const subEl = document.getElementById('bookingModalSubtitle');
+    const closeEl = modalEl?.querySelector('.booking-close-btn');
+    if (titleEl) titleEl.textContent = t('modalTitle');
+    if (subEl) subEl.textContent = t('modalSubtitle');
+    if (closeEl) closeEl.setAttribute('aria-label', t('closeAria'));
+    if (labelName) labelName.textContent = t('nameLabel');
+    if (inputName) inputName.placeholder = t('namePlaceholder');
+    if (labelPhone) labelPhone.textContent = t('phoneLabel');
+    if (inputPhone) inputPhone.placeholder = t('phonePlaceholder');
+    if (noticeBox) noticeBox.textContent = t('noticeText');
+    if (checkAgreeLabel) checkAgreeLabel.textContent = t('agreeNotice');
+    if (btnCancelForm) btnCancelForm.textContent = t('cancelFormBackBtn');
+  };
+
   const openModal = () => {
     if (!modalEl) createModalDOM();
+    updateModalTexts();
     renderDates();
     renderSlots();
     closeForm();
@@ -336,6 +475,7 @@
       formOverlay.classList.remove('is-active');
       inputName.value = '';
       inputPhone.value = '';
+      if (checkAgree) checkAgree.checked = false;
       currentActionSlot = null;
       alertBox.className = 'booking-alert';
       alertBox.textContent = '';
@@ -382,15 +522,15 @@
       const card = document.createElement('div');
       card.className = `booking-slot-card ${isOccupied ? 'is-occupied' : ''}`;
 
-      let occupantDisplay = '<span class="slot-status-text">Müsait</span>';
-      let actionBtnHTML = `<button type="button" class="slot-action-btn btn-book">Rezerve Et</button>`;
+      let occupantDisplay = `<span class="slot-status-text">${t('available')}</span>`;
+      let actionBtnHTML = `<button type="button" class="slot-action-btn btn-book">${t('bookBtn')}</button>`;
 
       if (isOccupied) {
         occupantDisplay = `
           <span class="slot-occupant-name">${escapeHtml(booking.name)}</span>
-          <span class="slot-status-text">Dolu</span>
+          <span class="slot-status-text">${t('booked')}</span>
         `;
-        actionBtnHTML = `<button type="button" class="slot-action-btn btn-cancel">İptal Et</button>`;
+        actionBtnHTML = `<button type="button" class="slot-action-btn btn-cancel">${t('cancelBtn')}</button>`;
       }
 
       card.innerHTML = `
@@ -423,10 +563,14 @@
   const openBookForm = (slot) => {
     actionType = 'book';
     currentActionSlot = slot;
-    formTitle.textContent = `Randevu Rezerve Et: ${slot.timeLabel}`;
-    formDesc.textContent = 'Adınızı ve WhatsApp numaranızı girerek bu saati adınıza ayırtabilirsiniz.';
-    btnSubmit.textContent = 'Rezervasyonu Onayla';
+    updateModalTexts();
+    formTitle.textContent = t('bookFormTitle', { time: slot.timeLabel });
+    formDesc.textContent = t('bookFormDesc');
+    btnSubmit.textContent = t('confirmBookBtn');
     btnSubmit.className = 'btn-primary';
+    if (noticeBox) noticeBox.style.display = 'block';
+    if (noticeCheckboxContainer) noticeCheckboxContainer.style.display = 'flex';
+    if (checkAgree) checkAgree.checked = false;
     alertBox.className = 'booking-alert';
     alertBox.textContent = '';
     formOverlay.classList.add('is-active');
@@ -437,10 +581,13 @@
   const openCancelForm = (slot, booking) => {
     actionType = 'cancel';
     currentActionSlot = slot;
-    formTitle.textContent = `Randevu İptali: ${slot.timeLabel}`;
-    formDesc.textContent = `Bu seans "${booking.name}" adına kayıtlıdır. İptal etmek için rezervasyon sırasındaki Ad Soyad ve WhatsApp numaranızı doğru girmelisiniz.`;
-    btnSubmit.textContent = 'Randevuyu İptal Et';
+    updateModalTexts();
+    formTitle.textContent = t('cancelFormTitle', { time: slot.timeLabel });
+    formDesc.textContent = t('cancelFormDesc', { name: booking.name });
+    btnSubmit.textContent = t('confirmCancelBtn');
     btnSubmit.className = 'btn-danger';
+    if (noticeBox) noticeBox.style.display = 'none';
+    if (noticeCheckboxContainer) noticeCheckboxContainer.style.display = 'none';
     alertBox.className = 'booking-alert';
     alertBox.textContent = '';
     formOverlay.classList.add('is-active');
@@ -453,13 +600,18 @@
     const phone = inputPhone.value.trim();
 
     if (!name || name.length < 3) {
-      showAlert('Lütfen geçerli bir Ad Soyad giriniz.', 'error');
+      showAlert(t('errName'), 'error');
       return;
     }
 
     const cleanDigits = cleanPhone(phone);
     if (!cleanDigits || cleanDigits.length < 10) {
-      showAlert('Lütfen geçerli bir telefon numarası giriniz.', 'error');
+      showAlert(t('errPhone'), 'error');
+      return;
+    }
+
+    if (actionType === 'book' && checkAgree && !checkAgree.checked) {
+      showAlert(t('errAgree'), 'error');
       return;
     }
 
@@ -473,7 +625,7 @@
 
       // Check race condition
       if (bookingsCache[currentSelectedDate][currentActionSlot.slotId]) {
-        showAlert('Bu saat dilimi az önce başkası tarafından alındı.', 'error');
+        showAlert(t('errTaken'), 'error');
         renderSlots();
         return;
       }
@@ -489,20 +641,29 @@
 
       // Trigger Apple Watch Notification
       sendPushoverNotification(
-        '🟢 Yeni Seans Randevusu!',
-        `${name} • ${currentSelectedDate} ${currentActionSlot.timeLabel}\nTel: ${phone}`
+        t('pushNewTitle'),
+        t('pushNewBody', {
+          name: name,
+          date: currentSelectedDate,
+          time: currentActionSlot.timeLabel,
+          phone: phone
+        })
       );
 
+      const successMsg = t('successBook', {
+        date: currentSelectedDate,
+        time: currentActionSlot.timeLabel
+      });
       closeForm();
       renderSlots();
-      alert(`Randevunuz başarıyla oluşturuldu: ${currentSelectedDate} ${currentActionSlot.timeLabel}`);
+      alert(successMsg);
     } else if (actionType === 'cancel') {
       // Verification before cancel
       const dayBookings = bookingsCache[currentSelectedDate] || {};
       const existing = dayBookings[currentActionSlot.slotId];
 
       if (!existing) {
-        showAlert('Bu saatte zaten aktif bir rezervasyon bulunamadı.', 'error');
+        showAlert(t('errNotFound'), 'error');
         renderSlots();
         return;
       }
@@ -511,7 +672,7 @@
       const isPhoneMatch = existing.cleanPhone.endsWith(cleanDigits.slice(-7)); // matches last 7 digits
 
       if (!isNameMatch || !isPhoneMatch) {
-        showAlert('Girdiğiniz Ad Soyad veya telefon numarası bu rezervasyonla eşleşmiyor.', 'error');
+        showAlert(t('errMismatch'), 'error');
         return;
       }
 
@@ -520,13 +681,21 @@
 
       // Trigger Apple Watch Notification
       sendPushoverNotification(
-        '🔴 Seans İptali!',
-        `${name} • ${currentSelectedDate} ${currentActionSlot.timeLabel} randevusunu iptal etti.`
+        t('pushCancelTitle'),
+        t('pushCancelBody', {
+          name: name,
+          date: currentSelectedDate,
+          time: currentActionSlot.timeLabel
+        })
       );
 
+      const successCancelMsg = t('successCancel', {
+        date: currentSelectedDate,
+        time: currentActionSlot.timeLabel
+      });
       closeForm();
       renderSlots();
-      alert(`Randevunuz başarıyla iptal edildi: ${currentSelectedDate} ${currentActionSlot.timeLabel}`);
+      alert(successCancelMsg);
     }
   };
 
@@ -568,10 +737,36 @@
     });
   };
 
+  // Re-render modal when user toggles language on the page
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-lang-toggle]')) {
+      setTimeout(() => {
+        if (modalEl && modalEl.classList.contains('is-visible')) {
+          updateModalTexts();
+          renderDates();
+          renderSlots();
+        }
+      }, 50);
+    }
+  });
+
+  window.addEventListener('popstate', () => {
+    if (modalEl && modalEl.classList.contains('is-visible')) {
+      updateModalTexts();
+      renderDates();
+      renderSlots();
+    }
+  });
+
   // Export globally for custom scripts
   window.bonjukBooking = {
     open: openModal,
-    close: closeModal
+    close: closeModal,
+    refreshLang: () => {
+      updateModalTexts();
+      renderDates();
+      renderSlots();
+    }
   };
 
   if (document.readyState === 'loading') {
