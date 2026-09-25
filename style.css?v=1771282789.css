@@ -1343,7 +1343,7 @@ main.container{
   inset: 0;
 
   backdrop-filter: blur(10px);
-  filter: url(style.css%3Fv=1771282789.css);
+  filter: url(#glass-distortion);
   overflow: hidden;
   isolation: isolate;
 }
@@ -1354,7 +1354,7 @@ main.container{
   inset: 0;
 
   backdrop-filter: blur(3px);
-  filter: url(style.css%3Fv=1771282789.css);
+  filter: url(#glass-distortion2);
   overflow: hidden;
   isolation: isolate;
 }
